@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">UpcomingMovieApp</string>
+    <string name="message_no_movies">No Movies to load!</string>
+</resources>
