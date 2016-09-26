@@ -1,5 +1,5 @@
 # Upcoming Movie App
-This is an assignment app which we ask to developers to complete before interview. New CodeToArt developers also studies our coding style and MVP design pattern using this assignment.
+This is an assignment app which we ask to developers to complete before interview. New CodeToArt developers also study our coding style and MVP design pattern using this assignment.
 
 ####Libraries used
 <ul><li>Support libraries</li>
