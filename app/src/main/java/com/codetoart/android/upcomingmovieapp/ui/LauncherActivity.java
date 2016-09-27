@@ -29,7 +29,7 @@ public class LauncherActivity extends BaseActivity {
 
     }
 
-    private void startMainActivity(){
+    private void startMainActivity() {
         finish();
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);

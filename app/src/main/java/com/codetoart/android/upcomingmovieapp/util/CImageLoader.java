@@ -14,7 +14,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 /**
  * Created by Mahavir on 04/11/2014.
  */
-public class MImageLoader {
+public class CImageLoader {
     private static final String UNIVERSAL_IMAGE_LOADER = "universal-image-loader";
     private static final String PICASSO_IMAGE_LOADER = "picasso";
 
@@ -22,35 +22,36 @@ public class MImageLoader {
 
     public static ImageLoader mImageLoader;
 
-    public static void initImageLoader(Context context){
-        if(mImageLoader==null) {
+    public static void initImageLoader(Context context) {
+        if (mImageLoader == null) {
             mImageLoader = ImageLoader.getInstance();
             mImageLoader.init(ImageLoaderConfiguration.createDefault(context));
         }
     }
 
-    public static void destroyImageLoader(){
-        if(mImageLoader!=null){
+    public static void destroyImageLoader() {
+        if (mImageLoader != null) {
             mImageLoader.destroy();
-            mImageLoader=null;
+            mImageLoader = null;
         }
     }
 
-    public static void stopImageLoader(){
-        if(mImageLoader!=null){
+    public static void stopImageLoader() {
+        if (mImageLoader != null) {
             mImageLoader.stop();
-            mImageLoader=null;
+            mImageLoader = null;
         }
     }
-    public static DisplayImageOptions defaulDisplayImageOptions(int place_holder_res){
+
+    public static DisplayImageOptions defaulDisplayImageOptions(int placeHolderRes) {
         return
                 new DisplayImageOptions.Builder()
                         .imageScaleType(ImageScaleType.EXACTLY)
                         .cacheInMemory(true)
                         .cacheOnDisk(true)
-                        .showImageForEmptyUri(place_holder_res)
-                        .showImageOnFail(place_holder_res)
-                        .showImageOnLoading(place_holder_res)
+                        .showImageForEmptyUri(placeHolderRes)
+                        .showImageOnFail(placeHolderRes)
+                        .showImageOnLoading(placeHolderRes)
                         .resetViewBeforeLoading(true)
                         .delayBeforeLoading(200)
                         .imageScaleType(ImageScaleType.EXACTLY)
@@ -58,7 +59,7 @@ public class MImageLoader {
                         .build();
     }
 
-    public static DisplayImageOptions defaulDisplayImageOptions(Drawable drawable){
+    public static DisplayImageOptions defaulDisplayImageOptions(Drawable drawable) {
         return
                 new DisplayImageOptions.Builder()
                         .imageScaleType(ImageScaleType.EXACTLY)
@@ -74,24 +75,24 @@ public class MImageLoader {
                         .build();
     }
 
-    public static void displayImage(Context context, String url, ImageView imageView, int place_holder_res){
-        if(UNIVERSAL_IMAGE_LOADER.equals(IMAGE_LOADER_TYPE)){
+    public static void displayImage(Context context, String url, ImageView imageView, int placeHolderRes) {
+        if (UNIVERSAL_IMAGE_LOADER.equals(IMAGE_LOADER_TYPE)) {
             initImageLoader(context);
-            mImageLoader.displayImage(url, imageView, defaulDisplayImageOptions(place_holder_res));
-        }
-        else if(PICASSO_IMAGE_LOADER.equals(IMAGE_LOADER_TYPE)){
+            mImageLoader.displayImage(url, imageView, defaulDisplayImageOptions(placeHolderRes));
         }
     }
 
-    public static void displayImage(Context context, String url, ImageView imageView, int place_holder_res, ImageLoadingListener listener){
-        if(UNIVERSAL_IMAGE_LOADER.equals(IMAGE_LOADER_TYPE)){
+    public static void displayImage(Context context, String url, ImageView imageView, int placeHolderRes,
+                                    ImageLoadingListener listener) {
+        if (UNIVERSAL_IMAGE_LOADER.equals(IMAGE_LOADER_TYPE)) {
             initImageLoader(context);
-            mImageLoader.displayImage(url, imageView, defaulDisplayImageOptions(place_holder_res), listener);
+            mImageLoader.displayImage(url, imageView,
+                    defaulDisplayImageOptions(placeHolderRes), listener);
         }
     }
 
-    public static void displayImage(Context context, String url, ImageView imageView, Drawable drawable){
-        if(UNIVERSAL_IMAGE_LOADER.equals(IMAGE_LOADER_TYPE)){
+    public static void displayImage(Context context, String url, ImageView imageView, Drawable drawable) {
+        if (UNIVERSAL_IMAGE_LOADER.equals(IMAGE_LOADER_TYPE)) {
             initImageLoader(context);
             mImageLoader.displayImage(url, imageView, defaulDisplayImageOptions(drawable));
         }

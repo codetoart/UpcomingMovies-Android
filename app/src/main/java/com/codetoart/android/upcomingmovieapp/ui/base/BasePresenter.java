@@ -3,7 +3,7 @@ package com.codetoart.android.upcomingmovieapp.ui.base;
 /**
  * Created by Mahavir on 9/1/16.
  */
-public class BasePresenter<T extends MvpView> implements Presenter<T>{
+public class BasePresenter<T extends MvpView> implements Presenter<T> {
 
     private T mMvpView;
 

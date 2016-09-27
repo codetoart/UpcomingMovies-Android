@@ -1,4 +1,4 @@
-package com.codetoart.android.upcomingmovieapp.ui.movie_details;
+package com.codetoart.android.upcomingmovieapp.ui.moviedetails;
 
 import com.codetoart.android.upcomingmovieapp.data.DataManager;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
@@ -19,17 +19,17 @@ public class MovieDetailsPresenter extends BasePresenter<MovieDetailsMvpView> {
     private Subscription mSubscription;
 
     @Inject
-    public MovieDetailsPresenter(DataManager dataManager){
+    public MovieDetailsPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
 
     @Override
     public void detachView() {
         super.detachView();
-        if (mSubscription!=null) mSubscription.unsubscribe();
+        if (mSubscription != null) mSubscription.unsubscribe();
     }
 
-    public void getMovieDetails(String movieId){
+    public void getMovieDetails(String movieId) {
         mSubscription = mDataManager.getImages(movieId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -3,7 +3,7 @@ package com.codetoart.android.upcomingmovieapp.injection.component;
 import com.codetoart.android.upcomingmovieapp.injection.PerActivity;
 import com.codetoart.android.upcomingmovieapp.injection.module.ActivityModule;
 import com.codetoart.android.upcomingmovieapp.ui.main.MainActivity;
-import com.codetoart.android.upcomingmovieapp.ui.movie_details.MovieDetailsActivity;
+import com.codetoart.android.upcomingmovieapp.ui.moviedetails.MovieDetailsActivity;
 
 import dagger.Component;
 

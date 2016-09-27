@@ -2,6 +2,9 @@ package com.codetoart.android.upcomingmovieapp.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,25 +13,37 @@ import java.text.SimpleDateFormat;
  * Created by jain on 4/12/2016.
  */
 public class Movie implements Parcelable {
-    public static final String MOVIE = "Movie";
+    public static final String INTENT_MOVIE = "Movie";
 
-    private String poster_path;
-    private String adult;
-    private String overview;
-    private String release_date;
-    private String id;
-    private String original_title;
-    private String original_language;
-    private String title;
-    private String backdrop_path;
-    private float popularity;
-    private int vote_count;
-    private float vote_average;
+    @JsonProperty("poster_path")
+    String posterPath;
+    @JsonProperty("adult")
+    String adult;
+    @JsonProperty("overview")
+    String overview;
+    @JsonProperty("release_date")
+    String releaseDate;
+    @JsonProperty("id")
+    String id;
+    @JsonProperty("original_title")
+    String originalTitle;
+    @JsonProperty("original_language")
+    String originalLanguage;
+    @JsonProperty("title")
+    String title;
+    @JsonProperty("backdrop_path")
+    String backdropPath;
+    @JsonProperty("popularity")
+    float popularity;
+    @JsonProperty("vote_count")
+    int voteCount;
+    @JsonProperty("vote_average")
+    float voteAverage;
 
     public Movie(){}
 
     protected Movie(Parcel in) {
-       readFromParcel(in);
+        readFromParcel(in);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -43,16 +58,12 @@ public class Movie implements Parcelable {
         }
     };
 
-    public String getPoster_path() {
-        return poster_path;
+    public String getPosterPath() {
+        return posterPath;
     }
 
-    public String get_Backdrop_path() {
-        return backdrop_path;
-    }
-
-    public void setPoster_path(String poster_path) {
-        this.poster_path = poster_path;
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 
     public String getAdult() {
@@ -71,12 +82,12 @@ public class Movie implements Parcelable {
         this.overview = overview;
     }
 
-    public String getRelease_date() {
-        return release_date;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setRelease_date(String release_date) {
-        this.release_date = release_date;
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public String getId() {
@@ -87,28 +98,28 @@ public class Movie implements Parcelable {
         this.id = id;
     }
 
-    public String getOriginal_title() {
-        return original_title;
+    public String getOriginalTitle() {
+        return originalTitle;
     }
 
-    public void setOriginal_title(String original_title) {
-        this.original_title = original_title;
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
     }
 
-    public String getOriginal_language() {
-        return original_language;
+    public String getOriginalLanguage() {
+        return originalLanguage;
     }
 
-    public void setOriginal_language(String original_language) {
-        this.original_language = original_language;
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
     }
 
-    public String getBackdrop_path() {
-        return backdrop_path;
+    public String getBackdropPath() {
+        return backdropPath;
     }
 
-    public void setBackdrop_path(String backdrop_path) {
-        this.backdrop_path = backdrop_path;
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 
     public String getTitle() {
@@ -127,42 +138,32 @@ public class Movie implements Parcelable {
         this.popularity = popularity;
     }
 
-    public int getVote_count() {
-        return vote_count;
+    public int getVoteCount() {
+        return voteCount;
     }
 
-    public void setVote_count(int vote_count) {
-        this.vote_count = vote_count;
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 
-    public float getVote_average() {
-        return vote_average;
+    public float getVoteAverage() {
+        return voteAverage;
     }
 
-    public void setVote_average(float vote_average) {
-        this.vote_average = vote_average;
+    public void setVoteAverage(float voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
-    public String get_adult(){
-        if(adult.equalsIgnoreCase("true")) {
-            adult="(A)";
-        } else {
-            adult="(A/U)";
-        }
-        return  adult;
-
-    }
-    public String get_release_date(){
-        SimpleDateFormat simpleDateFormat1=new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat simpleDateFormat2 =new SimpleDateFormat("dd/MM/yyyy");
+    public String getFormattedReleaseDate() {
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            java.util.Date date=simpleDateFormat1.parse(release_date);
-            release_date=simpleDateFormat2.format(date);
-
+            java.util.Date date = simpleDateFormat1.parse(releaseDate);
+            releaseDate = simpleDateFormat2.format(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e("Movie", "Exception => " + e.getLocalizedMessage());
         }
-        return  release_date;
+        return releaseDate;
     }
 
     @Override
@@ -171,33 +172,33 @@ public class Movie implements Parcelable {
     }
 
     private void readFromParcel(Parcel in) {
-        poster_path = in.readString();
+        posterPath = in.readString();
         adult = in.readString();
         overview = in.readString();
-        release_date = in.readString();
+        releaseDate = in.readString();
         id = in.readString();
-        original_title = in.readString();
-        original_language = in.readString();
+        originalTitle = in.readString();
+        originalLanguage = in.readString();
         title = in.readString();
-        backdrop_path = in.readString();
+        backdropPath = in.readString();
         popularity = in.readFloat();
-        vote_count = in.readInt();
-        vote_average = in.readFloat();
+        voteCount = in.readInt();
+        voteAverage = in.readFloat();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(poster_path);
+        dest.writeString(posterPath);
         dest.writeString(adult);
         dest.writeString(overview);
-        dest.writeString(release_date);
+        dest.writeString(releaseDate);
         dest.writeString(id);
-        dest.writeString(original_title);
-        dest.writeString(original_language);
+        dest.writeString(originalTitle);
+        dest.writeString(originalLanguage);
         dest.writeString(title);
-        dest.writeString(backdrop_path);
+        dest.writeString(backdropPath);
         dest.writeFloat(popularity);
-        dest.writeInt(vote_count);
-        dest.writeFloat(vote_average);
+        dest.writeInt(voteCount);
+        dest.writeFloat(voteAverage);
     }
 }

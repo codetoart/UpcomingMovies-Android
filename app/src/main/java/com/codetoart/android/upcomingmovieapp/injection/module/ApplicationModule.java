@@ -8,7 +8,6 @@ import com.codetoart.android.upcomingmovieapp.injection.ApplicationContext;
 
 import javax.inject.Singleton;
 
-import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 
@@ -36,7 +35,7 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    TMDbApi provideTMDbApi(){
+    TMDbApi provideTMDbApi() {
         return TMDbApi.Factory.makeTMDbApi(mApplication);
     }
 }

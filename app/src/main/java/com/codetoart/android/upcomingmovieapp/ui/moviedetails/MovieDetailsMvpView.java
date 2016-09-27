@@ -1,6 +1,5 @@
-package com.codetoart.android.upcomingmovieapp.ui.movie_details;
+package com.codetoart.android.upcomingmovieapp.ui.moviedetails;
 
-import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 import com.codetoart.android.upcomingmovieapp.ui.base.MvpView;
 

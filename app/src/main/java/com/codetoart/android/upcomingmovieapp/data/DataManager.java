@@ -1,7 +1,6 @@
 package com.codetoart.android.upcomingmovieapp.data;
 
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
-import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 
 import javax.inject.Inject;
@@ -18,7 +17,7 @@ public class DataManager {
     private final PreferencesHelper mPreferencesHelper;
 
     @Inject
-    public DataManager(TMDbApi tmDbApi, PreferencesHelper preferencesHelper){
+    public DataManager(TMDbApi tmDbApi, PreferencesHelper preferencesHelper) {
         this.mTMDbApi = tmDbApi;
         this.mPreferencesHelper = preferencesHelper;
     }
@@ -27,7 +26,8 @@ public class DataManager {
         Call<TMDbApi.Response.Metadata> metadataCall = mTMDbApi.getConfiguration(TMDbApi.API_KEY);
         metadataCall.enqueue(new Callback<TMDbApi.Response.Metadata>() {
             @Override
-            public void onResponse(Call<TMDbApi.Response.Metadata> call, Response<TMDbApi.Response.Metadata> response) {
+            public void onResponse(Call<TMDbApi.Response.Metadata> call,
+                Response<TMDbApi.Response.Metadata> response) {
                 callback.onConfiguration(response.body());
             }
 
@@ -53,15 +53,15 @@ public class DataManager {
         });
     }*/
 
-    public Observable<TMDbApi.Response.Metadata> getConfiguration(){
+    public Observable<TMDbApi.Response.Metadata> getConfiguration() {
         return mTMDbApi.getConfiguration(TMDbApi.API_KEY);
     }
 
-    public Observable<TMDbApi.Response.MovieResponse> getMovies(){
+    public Observable<TMDbApi.Response.MovieResponse> getMovies() {
         return mTMDbApi.upcomingMovies(TMDbApi.API_KEY);
     }
 
-    public Observable<TMDbApi.Response.ImageResponse> getImages(String movieId){
+    public Observable<TMDbApi.Response.ImageResponse> getImages(String movieId) {
         return mTMDbApi.getImages(movieId, TMDbApi.API_KEY);
     }
 }

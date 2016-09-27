@@ -6,6 +6,7 @@ import com.codetoart.android.upcomingmovieapp.BuildConfig;
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
 import com.codetoart.android.upcomingmovieapp.data.model.Image;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,7 +27,7 @@ import rx.Observable;
  */
 public interface TMDbApi {
     public String ENDPOINT = "https://api.themoviedb.org/3/";
-    public static final String API_KEY ="b7cd3340a794e5a2f35e3abb820b497f" ;
+    public static final String API_KEY = "b7cd3340a794e5a2f35e3abb820b497f";
 
     /*@GET("configuration")
     public Call<Response.Metadata> getConfiguration(@Query("api_key") String apikey);*/
@@ -40,7 +41,8 @@ public interface TMDbApi {
     public Observable<Response.MovieResponse> upcomingMovies(@Query("api_key") String apikey);
 
     @GET("movie/{movie_id}/images")
-    public Observable<Response.ImageResponse> getImages(@Path("movie_id") String movieId, @Query("api_key") String apikey);
+    public Observable<Response.ImageResponse> getImages(@Path("movie_id")
+                                                 String movieId, @Query("api_key") String apiKey);
 
     /******** Factory class that sets up a new TMDbApi *******/
     class Factory {
@@ -70,37 +72,40 @@ public interface TMDbApi {
 
     class Response {
         public static class ImageMetadata {
-            private String base_url;
-            private String secure_base_url;
-            private ArrayList<String> poster_sizes;
+            @JsonProperty("base_url")
+            String baseUrl;
+            @JsonProperty("secure_base_url")
+            String secureBaseUrl;
+            @JsonProperty("poster_sizes")
+            ArrayList<String> posterSizes;
 
-            public String getBase_url() {
-                return base_url;
+            public String getBaseUrl() {
+                return baseUrl;
             }
 
-            public void setBase_url(String base_url) {
-                this.base_url = base_url;
+            public void setBaseUrl(String baseUrl) {
+                this.baseUrl = baseUrl;
             }
 
-            public String getSecure_base_url() {
-                return secure_base_url;
+            public String getSecureBaseUrl() {
+                return secureBaseUrl;
             }
 
-            public void setSecure_base_url(String secure_base_url) {
-                this.secure_base_url = secure_base_url;
+            public void setSecureBaseUrl(String secureBaseUrl) {
+                this.secureBaseUrl = secureBaseUrl;
             }
 
-            public ArrayList<String> getPoster_sizes() {
-                return poster_sizes;
+            public ArrayList<String> getPosterSizes() {
+                return posterSizes;
             }
 
-            public void setPoster_sizes(ArrayList<String> poster_sizes) {
-                this.poster_sizes = poster_sizes;
+            public void setPosterSizes(ArrayList<String> posterSizes) {
+                this.posterSizes = posterSizes;
             }
         }
 
         public static class Metadata {
-            private ImageMetadata images;
+            ImageMetadata images;
 
             public ImageMetadata getImages() {
                 return images;
@@ -110,29 +115,37 @@ public interface TMDbApi {
                 this.images = images;
             }
 
-            public void save(PreferencesHelper preferencesHelper){
-                int len = images.poster_sizes.size();
-                preferencesHelper.putThumbnailBaseImageUrl(images.base_url+images.poster_sizes.get(0));
-                preferencesHelper.putMediumBaseImageUrl(images.base_url+images.poster_sizes.get(len-2));
-                preferencesHelper.putOriginalBaseImageUrl(images.base_url+images.poster_sizes.get(len-1));
+            public void save(PreferencesHelper preferencesHelper) {
+                int len = images.posterSizes.size();
+                preferencesHelper.putThumbnailBaseImageUrl(images.baseUrl +
+                        images.posterSizes.get(0));
+                preferencesHelper.putMediumBaseImageUrl(images.baseUrl +
+                        images.posterSizes.get(len - 2));
+                preferencesHelper.putOriginalBaseImageUrl(images.baseUrl +
+                        images.posterSizes.get(len - 1));
             }
         }
 
         public static class MovieResponse {
-            private int page;
-            private ArrayList<Movie> results;
-            private Date dates;
-            private int total_pages;
-            private int total_results;
+            @JsonProperty("page")
+            int page;
+            @JsonProperty("results")
+            ArrayList<Movie> results;
+            @JsonProperty("dates")
+            Date dates;
+            @JsonProperty("total_pages")
+            int totalPages;
+            @JsonProperty("total_results")
+            int totalResults;
 
             public  MovieResponse(){}
 
-            public int getTotal_pages() {
-                return total_pages;
+            public int getTotalPages() {
+                return totalPages;
             }
 
-            public void setTotal_pages(int total_pages) {
-                this.total_pages = total_pages;
+            public void setTotalPages(int totalPages) {
+                this.totalPages = totalPages;
             }
 
             public ArrayList<Movie> getResults() {
@@ -159,18 +172,18 @@ public interface TMDbApi {
                 this.dates = dates;
             }
 
-            public int getTotal_results() {
-                return total_results;
+            public int getTotalResults() {
+                return totalResults;
             }
 
-            public void setTotal_results(int total_results) {
-                this.total_results = total_results;
+            public void setTotalResults(int totalResults) {
+                this.totalResults = totalResults;
             }
         }
 
         public static class Date {
-            private String maximum;
-            private String minimum;
+            String maximum;
+            String minimum;
 
             public  Date(){}
 
@@ -192,9 +205,9 @@ public interface TMDbApi {
         }
 
         public static class ImageResponse {
-            private String id;
-            private ArrayList<Image> backdrops;
-            private ArrayList<Image> posters;
+            String id;
+            ArrayList<Image> backdrops;
+            ArrayList<Image> posters;
 
             public  ImageResponse(){}
 

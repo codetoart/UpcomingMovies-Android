@@ -1,7 +1,6 @@
 package com.codetoart.android.upcomingmovieapp.ui.base;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;

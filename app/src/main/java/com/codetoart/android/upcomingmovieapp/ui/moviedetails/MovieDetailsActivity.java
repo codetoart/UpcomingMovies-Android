@@ -1,4 +1,4 @@
-package com.codetoart.android.upcomingmovieapp.ui.movie_details;
+package com.codetoart.android.upcomingmovieapp.ui.moviedetails;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -45,7 +45,8 @@ public class MovieDetailsActivity extends BaseActivity implements MovieDetailsMv
         mIndicator.setViewPager(mViewPager);
         mViewPagerAdapter.registerDataSetObserver(mIndicator.getDataSetObserver());
 
-        mMovie = getIntent().getParcelableExtra(Movie.MOVIE);
+        mMovie = getIntent().getParcelableExtra(Movie.INTENT_MOVIE);
+        init();
         mMovieDetailsPresenter.getMovieDetails(mMovie.getId());
     }
 
@@ -55,17 +56,20 @@ public class MovieDetailsActivity extends BaseActivity implements MovieDetailsMv
         mMovieDetailsPresenter.detachView();
     }
 
-    @Override
-    public void showMovie(TMDbApi.Response.ImageResponse imageResponse) {
-        mViewPagerAdapter.setImageArrayList(imageResponse.getPosters());
-        mViewPagerAdapter.notifyDataSetChanged();
+    private void init() {
         mTitleTextView.setText(mMovie.getTitle());
         mDescTextView.setText(mMovie.getOverview());
         mMovieRatingBar.setRating(mMovie.getPopularity());
     }
 
     @Override
+    public void showMovie(TMDbApi.Response.ImageResponse imageResponse) {
+        mViewPagerAdapter.setImageArrayList(imageResponse.getPosters());
+        mViewPagerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void showError(String error) {
-        Log.e("MovieDetailsActivity", "Error: "+error);
+        Log.e("MovieDetailsActivity", "Error: " + error);
     }
 }

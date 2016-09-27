@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.codetoart.android.upcomingmovieapp.R;
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
-import com.codetoart.android.upcomingmovieapp.util.MImageLoader;
+import com.codetoart.android.upcomingmovieapp.util.CImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,23 +24,24 @@ import butterknife.OnClick;
 /**
  * Created by Mahavir on 9/1/16.
  */
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>{
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
     private List<Movie> mMovies;
     private MovieAdapterCallback mCallback;
     @Inject PreferencesHelper mPreferencesHelper;
 
     @Inject
-    public MovieAdapter(){
+    public MovieAdapter() {
         mMovies = new ArrayList<>();
     }
 
-    public void setMovies(List<Movie> movies){
+    public void setMovies(List<Movie> movies) {
         this.mMovies.addAll(movies);
     }
 
     @Override
     public MovieHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_movie, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_movie,
+                parent, false);
         return new MovieHolder(view);
     }
 
@@ -48,9 +49,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     public void onBindViewHolder(MovieHolder holder, int position) {
         Movie movie = mMovies.get(position);
         holder.setMovie(movie);
-        String imageUrl = mPreferencesHelper.getThumbnailBaseImageUrl()+movie.getPoster_path();
+        String imageUrl = mPreferencesHelper.getThumbnailBaseImageUrl() + movie.getPosterPath();
         holder.movie_name.setText(movie.getTitle());
-        MImageLoader.displayImage(holder.poster_image.getContext(), imageUrl,
+        CImageLoader.displayImage(holder.poster_image.getContext(), imageUrl,
                 holder.poster_image, R.drawable.place_holder);
         /*Glide.with(holder.poster_image.getContext())
                 .load(imageUrl)
@@ -58,7 +59,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
                 .into(holder.poster_image);*/
     }
 
-    public void setCallback(MovieAdapterCallback callback){
+    public void setCallback(MovieAdapterCallback callback) {
         this.mCallback = callback;
     }
 
@@ -78,13 +79,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
             ButterKnife.bind(this, itemView);
         }
 
-        public void setMovie(Movie movie){
+        public void setMovie(Movie movie) {
             this.movie = movie;
         }
 
         @OnClick(R.id.row_layout)
-        void onItemClicked(View view){
-            if (mCallback!=null) mCallback.onMovieClicked(movie);
+        void onItemClicked(View view) {
+            if (mCallback != null) mCallback.onMovieClicked(movie);
         }
     }
 

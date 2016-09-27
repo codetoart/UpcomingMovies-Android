@@ -1,7 +1,5 @@
 package com.codetoart.android.upcomingmovieapp.ui.main;
 
-import android.util.Log;
-
 import com.codetoart.android.upcomingmovieapp.data.DataManager;
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
@@ -38,7 +36,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }*/
 
     @Inject
-    public MainPresenter(DataManager dataManager, PreferencesHelper preferencesHelper){
+    public MainPresenter(DataManager dataManager, PreferencesHelper preferencesHelper) {
         this.mDataManager = dataManager;
         this.mPreferenceHelper = preferencesHelper;
     }
@@ -86,11 +84,13 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         });
     }*/
 
-    public void getConfigurationAndLoadMovies(){
-        mSubscription = Observable.zip(mDataManager.getConfiguration(),mDataManager.getMovies(),
-                new Func2<TMDbApi.Response.Metadata, TMDbApi.Response.MovieResponse, List<Movie>>() {
+    public void getConfigurationAndLoadMovies() {
+        mSubscription = Observable.zip(mDataManager.getConfiguration(), mDataManager.getMovies(),
+                new Func2<TMDbApi.Response.Metadata, TMDbApi.Response.MovieResponse,
+                        List<Movie>>() {
                     @Override
-                    public List<Movie> call(TMDbApi.Response.Metadata metadata, TMDbApi.Response.MovieResponse movieResponse) {
+                    public List<Movie> call(TMDbApi.Response.Metadata metadata,
+                                            TMDbApi.Response.MovieResponse movieResponse) {
                         metadata.save(mPreferenceHelper);
                         return movieResponse.getResults();
                     }
@@ -110,7 +110,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                     @Override
                     public void onNext(List<Movie> movies) {
                         getMvpView().showMovieProgress(false);
-                        if (movies.isEmpty()){
+                        if (movies.isEmpty()) {
                             getMvpView().showEmptyMessage();
                         } else {
                             getMvpView().showMovies(movies);

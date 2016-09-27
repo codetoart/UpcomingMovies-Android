@@ -1,32 +1,40 @@
 package com.codetoart.android.upcomingmovieapp.data.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by jain on 4/12/2016.
  */
 public class Image {
-    private String aspect_ratio;
-    private String file_path;
-    private int height;
-    private float vote_average;
-    private float vote_count;
-    private int width;
+    @JsonProperty("aspect_ratio")
+    String aspectRatio;
+    @JsonProperty("file_path")
+    String filePath;
+    @JsonProperty("height")
+    int height;
+    @JsonProperty("vote_average")
+    float voteAverage;
+    @JsonProperty("vote_count")
+    float voteCount;
+    @JsonProperty("width")
+    int width;
 
     public Image(){}
 
-    public String getAspect_ratio() {
-        return aspect_ratio;
+    public String getAspectRatio() {
+        return aspectRatio;
     }
 
-    public void setAspect_ratio(String aspect_ratio) {
-        this.aspect_ratio = aspect_ratio;
+    public void setAspectRatio(String aspectRatio) {
+        this.aspectRatio = aspectRatio;
     }
 
-    public String getFile_path() {
-        return file_path;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setFile_path(String file_path) {
-        this.file_path = file_path;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public int getHeight() {
@@ -37,20 +45,20 @@ public class Image {
         this.height = height;
     }
 
-    public float getVote_average() {
-        return vote_average;
+    public float getVoteAverage() {
+        return voteAverage;
     }
 
-    public void setVote_average(float vote_average) {
-        this.vote_average = vote_average;
+    public void setVoteAverage(float voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
-    public float getVote_count() {
-        return vote_count;
+    public float getVoteCount() {
+        return voteCount;
     }
 
-    public void setVote_count(float vote_count) {
-        this.vote_count = vote_count;
+    public void setVoteCount(float voteCount) {
+        this.voteCount = voteCount;
     }
 
     public int getWidth() {

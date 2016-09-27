@@ -1,4 +1,4 @@
-package com.codetoart.android.upcomingmovieapp.ui.movie_details;
+package com.codetoart.android.upcomingmovieapp.ui.moviedetails;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,7 +14,7 @@ import com.codetoart.android.upcomingmovieapp.R;
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
 import com.codetoart.android.upcomingmovieapp.data.model.Image;
 import com.codetoart.android.upcomingmovieapp.injection.ActivityContext;
-import com.codetoart.android.upcomingmovieapp.util.MImageLoader;
+import com.codetoart.android.upcomingmovieapp.util.CImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
@@ -39,11 +39,11 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        if (mImageArrayList==null) return 0;
+        if (mImageArrayList == null) return 0;
 
-        if(mImageArrayList.size()>=5){
+        if (mImageArrayList.size() >= 5) {
             return 5;
-        }else{
+        } else {
             return  mImageArrayList.size();
         }
     }
@@ -53,39 +53,42 @@ public class ViewPagerAdapter extends PagerAdapter {
         return view == (object);
     }
 
-    public void setImageArrayList(ArrayList<Image> imageArrayList){
+    public void setImageArrayList(ArrayList<Image> imageArrayList) {
         this.mImageArrayList = imageArrayList;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        final View itemView = LayoutInflater.from(mContext).inflate(R.layout.row_pager, container, false);
+        final View itemView = LayoutInflater.from(mContext).inflate(R.layout.row_pager,
+                container, false);
         final ImageView imageView = (ImageView) itemView.findViewById(R.id.img_movie_poster);
         final ProgressBar progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
-        String imageUrl = mPreferencesHelper.getMediumBaseImageUrl()+mImageArrayList.get(position).getFile_path();
-        MImageLoader.displayImage(mContext, imageUrl, imageView, R.drawable.place_holder, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-                imageView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-            }
+        String imageUrl = mPreferencesHelper.getMediumBaseImageUrl() +
+                mImageArrayList.get(position).getFilePath();
+        CImageLoader.displayImage(mContext, imageUrl, imageView, R.drawable.place_holder,
+                new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view) {
+                        imageView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
 
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                    @Override
+                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 
-            }
+                    }
 
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                imageView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        imageView.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
 
-            @Override
-            public void onLoadingCancelled(String imageUri, View view) {
+                    @Override
+                    public void onLoadingCancelled(String imageUri, View view) {
 
-            }
-        });
+                    }
+                });
 
         container.addView(itemView);
         return itemView;

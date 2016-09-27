@@ -49,33 +49,34 @@ public class PreferencesHelper {
     public List<Movie> getMovies() throws IOException {
         String moviesJson = mPref.getString(PREF_KEY_MOVIES, null);
         if (moviesJson != null) {
-            return mObjectMapper.readValue(moviesJson, new TypeReference<List<Movie>>() {});
+            return mObjectMapper.readValue(moviesJson, new TypeReference<List<Movie>>() {
+            });
         }
 
         return null;
     }
 
-    public void putThumbnailBaseImageUrl(String imageUrl){
+    public void putThumbnailBaseImageUrl(String imageUrl) {
         mPref.edit().putString(PREF_KEY_THUMBNAIL_BASE_IMAGE_URL, imageUrl).apply();
     }
 
-    public void putMediumBaseImageUrl(String imageUrl){
+    public void putMediumBaseImageUrl(String imageUrl) {
         mPref.edit().putString(PREF_KEY_MEDIUM_BASE_IMAGE_URL, imageUrl).apply();
     }
 
-    public void putOriginalBaseImageUrl(String imageUrl){
+    public void putOriginalBaseImageUrl(String imageUrl) {
         mPref.edit().putString(PREF_KEY_ORIGINAL_BASE_IMAGE_URL, imageUrl).apply();
     }
 
-    public String getThumbnailBaseImageUrl(){
+    public String getThumbnailBaseImageUrl() {
         return mPref.getString(PREF_KEY_THUMBNAIL_BASE_IMAGE_URL, null);
     }
 
-    public String getMediumBaseImageUrl(){
+    public String getMediumBaseImageUrl() {
         return mPref.getString(PREF_KEY_MEDIUM_BASE_IMAGE_URL, null);
     }
 
-    public String getOriginalBaseImageUrl(){
+    public String getOriginalBaseImageUrl() {
         return mPref.getString(PREF_KEY_ORIGINAL_BASE_IMAGE_URL, null);
     }
     /*public Observable<List<Venue>> getVenuesAsObservable() {

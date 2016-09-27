@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.codetoart.android.upcomingmovieapp.R;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.ui.base.BaseActivity;
-import com.codetoart.android.upcomingmovieapp.ui.movie_details.MovieDetailsActivity;
+import com.codetoart.android.upcomingmovieapp.ui.moviedetails.MovieDetailsActivity;
 
 import java.util.List;
 
@@ -23,7 +23,8 @@ import butterknife.ButterKnife;
 /**
  * Created by Mahavir on 9/1/16.
  */
-public class MainActivity extends BaseActivity implements MainMvpView, MovieAdapter.MovieAdapterCallback {
+public class MainActivity extends BaseActivity implements MainMvpView,
+        MovieAdapter.MovieAdapterCallback {
 
     @Inject MainPresenter mMainPresenter;
     @Inject MovieAdapter mMovieAdapter;
@@ -61,7 +62,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, MovieAdap
 
     @Override
     public void showMovieProgress(boolean show) {
-        if (show && mMovieAdapter.getItemCount()==0){
+        if (show && mMovieAdapter.getItemCount() == 0) {
             mProgress.setVisibility(View.VISIBLE);
         } else {
             mProgress.setVisibility(View.GONE);
@@ -84,7 +85,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, MovieAdap
     @Override
     public void onMovieClicked(Movie movie) {
         Intent intent = new Intent(this, MovieDetailsActivity.class);
-        intent.putExtra(Movie.MOVIE, movie);
+        intent.putExtra(Movie.INTENT_MOVIE, movie);
         startActivity(intent);
     }
 }
