@@ -14,7 +14,7 @@ This is an assignment app which we ask to developers to complete before intervie
 
 #### Developed using MVP pattern
 
-![alt tag](https://cloud.githubusercontent.com/assets/1277242/18835136/41ceefd6-8417-11e6-882f-d8c4b6e24bd8.png)
+![alt tag](https://cloud.githubusercontent.com/assets/1277242/19315243/8c3929e2-90ba-11e6-86fe-e9f67fc7910c.png)
 
 #### Quality check
 <b>PMD</b> - PMD code analysis tool finds common programming flaws like unused variables, empty catch blocks, unnecessary object creation, and so forth.
