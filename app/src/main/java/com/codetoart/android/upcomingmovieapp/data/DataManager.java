@@ -1,7 +1,13 @@
 package com.codetoart.android.upcomingmovieapp.data;
 
+import com.codetoart.android.upcomingmovieapp.data.local.DbHelper;
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
+import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
+
+import org.greenrobot.greendao.rx.RxDao;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,11 +21,13 @@ import rx.Observable;
 public class DataManager {
     private final TMDbApi mTMDbApi;
     private final PreferencesHelper mPreferencesHelper;
+    private final DbHelper mDbHelper;
 
     @Inject
-    public DataManager(TMDbApi tmDbApi, PreferencesHelper preferencesHelper) {
+    public DataManager(TMDbApi tmDbApi, PreferencesHelper preferencesHelper, DbHelper dbHelper) {
         this.mTMDbApi = tmDbApi;
         this.mPreferencesHelper = preferencesHelper;
+        this.mDbHelper = dbHelper;
     }
 
     /*public void getConfiguration(final MainPresenter.ConfigurationCallback callback){
@@ -63,5 +71,9 @@ public class DataManager {
 
     public Observable<TMDbApi.Response.ImageResponse> getImages(String movieId) {
         return mTMDbApi.getImages(movieId, TMDbApi.API_KEY);
+    }
+
+    public RxDao<Movie, String> getMovieDao(){
+        return mDbHelper.getMovieDao();
     }
 }

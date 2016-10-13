@@ -6,7 +6,7 @@ import com.codetoart.android.upcomingmovieapp.ui.base.MvpView;
 import java.util.List;
 
 /**
- * Created by priyank on 9/1/16.
+ * Created by Mahavir on 9/1/16.
  */
 public interface MainMvpView extends MvpView {
     void showMovies(List<Movie> movies);

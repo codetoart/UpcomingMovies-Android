@@ -1,11 +1,16 @@
 package com.codetoart.android.upcomingmovieapp.ui.main;
 
+import android.content.Context;
+
 import com.codetoart.android.upcomingmovieapp.data.DataManager;
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 import com.codetoart.android.upcomingmovieapp.ui.base.BasePresenter;
+import com.codetoart.android.upcomingmovieapp.util.Util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,6 +19,8 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
@@ -44,7 +51,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     @Override
     public void detachView() {
         super.detachView();
-        mSubscription.unsubscribe();
+        if (mSubscription!=null) mSubscription.unsubscribe();
     }
 
     /*public void getConfigurationAndLoadMovies(){
@@ -84,7 +91,15 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         });
     }*/
 
-    public void getConfigurationAndLoadMovies() {
+    public void loadMovies(Context context){
+        if (Util.isNetworkAvailable(context)){
+            getConfigurationAndLoadMovies();
+        } else {
+            getMoviesFromDb();
+        }
+    }
+
+    private void getConfigurationAndLoadMovies() {
         mSubscription = Observable.zip(mDataManager.getConfiguration(), mDataManager.getMovies(),
                 new Func2<TMDbApi.Response.Metadata, TMDbApi.Response.MovieResponse,
                         List<Movie>>() {
@@ -92,13 +107,54 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                     public List<Movie> call(TMDbApi.Response.Metadata metadata,
                                             TMDbApi.Response.MovieResponse movieResponse) {
                         metadata.save(mPreferenceHelper);
+                        mDataManager.getMovieDao().insertOrReplaceInTx(movieResponse.getResults());
                         return movieResponse.getResults();
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .flatMap(new Func1<List<Movie>, Observable<Iterable<Movie>>>() {
+                    @Override
+                    public Observable<Iterable<Movie>> call(List<Movie> movies) {
+                        return mDataManager.getMovieDao().insertOrReplaceInTx(movies);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Iterable<Movie>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getMvpView().showMovieProgress(false);
+                        getMvpView().showMovieLoadError(e);
+                    }
+
+                    @Override
+                    public void onNext(Iterable<Movie> movies) {
+                        getMvpView().showMovieProgress(false);
+                        List<Movie> movieList = new ArrayList<>();
+                        for(Movie movie:movies){
+                            movieList.add(movie);
+                        }
+
+                        if (movieList.isEmpty()) {
+                            getMvpView().showEmptyMessage();
+                        } else {
+                            getMvpView().showMovies(movieList);
+                        }
+                    }
+                });
+    }
+
+    private void getMoviesFromDb(){
+        mSubscription = mDataManager.getMovieDao().loadAll()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Movie>>() {
                     @Override
                     public void onCompleted() {
+
                     }
 
                     @Override

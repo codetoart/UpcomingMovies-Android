@@ -6,37 +6,57 @@ import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.Transient;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * Created by jain on 4/12/2016.
+ * Created by Mahavir on 4/12/2016.
  */
+@Entity
 public class Movie implements Parcelable {
     public static final String INTENT_MOVIE = "Movie";
 
+    @Property
     @JsonProperty("poster_path")
     String posterPath;
+    @Property
     @JsonProperty("adult")
     String adult;
+    @Property
     @JsonProperty("overview")
     String overview;
+    @Property
     @JsonProperty("release_date")
     String releaseDate;
+    @Id
     @JsonProperty("id")
     String id;
+    @Property
     @JsonProperty("original_title")
     String originalTitle;
+    @Transient
     @JsonProperty("original_language")
     String originalLanguage;
+    @Property
     @JsonProperty("title")
     String title;
+    @Property
     @JsonProperty("backdrop_path")
     String backdropPath;
+    @NotNull
     @JsonProperty("popularity")
     float popularity;
+    @NotNull
     @JsonProperty("vote_count")
     int voteCount;
+    @NotNull
     @JsonProperty("vote_average")
     float voteAverage;
 
@@ -44,6 +64,24 @@ public class Movie implements Parcelable {
 
     protected Movie(Parcel in) {
         readFromParcel(in);
+    }
+
+    @Generated(hash = 340235262)
+    public Movie(String posterPath, String adult, String overview,
+            String releaseDate, String id, String originalTitle, String title,
+            String backdropPath, float popularity, int voteCount,
+            float voteAverage) {
+        this.posterPath = posterPath;
+        this.adult = adult;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.id = id;
+        this.originalTitle = originalTitle;
+        this.title = title;
+        this.backdropPath = backdropPath;
+        this.popularity = popularity;
+        this.voteCount = voteCount;
+        this.voteAverage = voteAverage;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

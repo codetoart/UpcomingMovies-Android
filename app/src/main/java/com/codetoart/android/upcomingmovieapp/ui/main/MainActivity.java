@@ -12,6 +12,8 @@ import com.codetoart.android.upcomingmovieapp.R;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.ui.base.BaseActivity;
 import com.codetoart.android.upcomingmovieapp.ui.moviedetails.MovieDetailsActivity;
+import com.codetoart.android.upcomingmovieapp.util.CImageLoader;
+import com.codetoart.android.upcomingmovieapp.util.Util;
 
 import java.util.List;
 
@@ -40,7 +42,8 @@ public class MainActivity extends BaseActivity implements MainMvpView,
         ButterKnife.bind(this);
         activityComponent().inject(this);
         mMainPresenter.attachView(this);
-        mMainPresenter.getConfigurationAndLoadMovies();
+
+        mMainPresenter.loadMovies(this);
         mMovieAdapter.setCallback(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mMovieAdapter);
@@ -50,6 +53,7 @@ public class MainActivity extends BaseActivity implements MainMvpView,
     protected void onDestroy() {
         super.onDestroy();
         mMainPresenter.detachView();
+        CImageLoader.stopImageLoader();
     }
 
     @Override

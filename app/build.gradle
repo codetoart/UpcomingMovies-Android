@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply from: '../config/quality/quality.gradle'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 24
@@ -8,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.codetoart.android.upcomingmovieapp"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -35,6 +36,10 @@ android {
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
     }
+}
+
+greendao {
+    schemaVersion 1
 }
 
 dependencies {
@@ -72,4 +77,7 @@ dependencies {
     //compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'me.relex:circleindicator:1.2.1@aar'
+    compile 'org.greenrobot:greendao:3.2.0'
+    //compile 'com.squareup.sqlbrite:sqlbrite:0.7.0'
+    compile 'com.folioreader:folioreader:0.1.1'
 }
