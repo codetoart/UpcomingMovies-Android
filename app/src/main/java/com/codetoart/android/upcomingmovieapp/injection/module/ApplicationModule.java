@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 import com.codetoart.android.upcomingmovieapp.injection.ApplicationContext;
+import com.squareup.otto.Bus;
 
 import javax.inject.Singleton;
 
@@ -37,5 +38,11 @@ public class ApplicationModule {
     @Singleton
     TMDbApi provideTMDbApi() {
         return TMDbApi.Factory.makeTMDbApi(mApplication);
+    }
+
+    @Provides
+    @Singleton
+    Bus provideEventBus() {
+        return new Bus();
     }
 }

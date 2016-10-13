@@ -53,6 +53,7 @@ public interface TMDbApi {
                     : HttpLoggingInterceptor.Level.NONE);
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(new UnauthorisedInterceptor(context))
                     .addInterceptor(logging)
                     .build();
 

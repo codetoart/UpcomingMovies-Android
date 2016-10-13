@@ -13,7 +13,7 @@ import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.ui.base.BaseActivity;
 import com.codetoart.android.upcomingmovieapp.ui.moviedetails.MovieDetailsActivity;
 import com.codetoart.android.upcomingmovieapp.util.CImageLoader;
-import com.codetoart.android.upcomingmovieapp.util.Util;
+import com.codetoart.android.upcomingmovieapp.util.NetworkUtil;
 
 import java.util.List;
 
@@ -43,10 +43,18 @@ public class MainActivity extends BaseActivity implements MainMvpView,
         activityComponent().inject(this);
         mMainPresenter.attachView(this);
 
-        mMainPresenter.loadMovies(this);
+        loadMovies();
         mMovieAdapter.setCallback(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mMovieAdapter);
+    }
+
+    private void loadMovies(){
+        if (NetworkUtil.isNetworkConnected(this)){
+            mMainPresenter.getConfigurationAndLoadMovies();
+        } else {
+            mMainPresenter.getMoviesFromDb();
+        }
     }
 
     @Override

@@ -1,16 +1,12 @@
 package com.codetoart.android.upcomingmovieapp.ui.main;
 
-import android.content.Context;
-
 import com.codetoart.android.upcomingmovieapp.data.DataManager;
 import com.codetoart.android.upcomingmovieapp.data.local.PreferencesHelper;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 import com.codetoart.android.upcomingmovieapp.ui.base.BasePresenter;
-import com.codetoart.android.upcomingmovieapp.util.Util;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,7 +15,6 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
@@ -91,15 +86,15 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         });
     }*/
 
-    public void loadMovies(Context context){
+    /*public void loadMovies(Context context){
         if (Util.isNetworkAvailable(context)){
             getConfigurationAndLoadMovies();
         } else {
             getMoviesFromDb();
         }
-    }
+    }*/
 
-    private void getConfigurationAndLoadMovies() {
+    public void getConfigurationAndLoadMovies() {
         mSubscription = Observable.zip(mDataManager.getConfiguration(), mDataManager.getMovies(),
                 new Func2<TMDbApi.Response.Metadata, TMDbApi.Response.MovieResponse,
                         List<Movie>>() {
@@ -147,7 +142,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                 });
     }
 
-    private void getMoviesFromDb(){
+    public void getMoviesFromDb(){
         mSubscription = mDataManager.getMovieDao().loadAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
