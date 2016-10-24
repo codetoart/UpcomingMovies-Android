@@ -1,5 +1,6 @@
 package com.codetoart.android.upcomingmovieapp.common;
 
+import com.codetoart.android.upcomingmovieapp.data.model.Image;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 
@@ -87,6 +88,39 @@ public class MockModelFactory {
         date.setMaximum(randomString());
         date.setMinimum(randomString());
         return date;
+    }
+
+    public static Image newImage(){
+        Random random = new Random();
+        Image image = new Image();
+        image.setAspectRatio(randomString());
+        image.setFilePath(randomString());
+        image.setVoteAverage(random.nextFloat());
+        image.setVoteCount(random.nextFloat());
+        image.setHeight(random.nextInt(500));
+        image.setWidth(random.nextInt(500));
+        return image;
+    }
+
+    public static TMDbApi.Response.ImageResponse newImageResponse(){
+        TMDbApi.Response.ImageResponse imageResponse = new TMDbApi.Response.ImageResponse();
+        imageResponse.setId(randomString());
+
+        ArrayList<Image> backDrops = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Image image = newImage();
+            backDrops.add(image);
+        }
+        imageResponse.setBackdrops(backDrops);
+
+        ArrayList<Image> posters = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Image image = newImage();
+            posters.add(image);
+        }
+        imageResponse.setPosters(posters);
+
+        return imageResponse;
     }
 
 }

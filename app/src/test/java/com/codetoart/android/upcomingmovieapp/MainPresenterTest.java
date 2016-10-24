@@ -30,7 +30,6 @@ import static org.mockito.Mockito.verify;
 public class MainPresenterTest {
     @Mock
     MainMvpView mMockMainMvpView;
-
     @Mock
     DataManager mMockDataManager;
     @Mock
