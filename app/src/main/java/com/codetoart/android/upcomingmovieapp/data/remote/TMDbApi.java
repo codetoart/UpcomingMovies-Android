@@ -21,6 +21,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by Mahavir on 9/1/16.
@@ -124,6 +125,18 @@ public interface TMDbApi {
                         images.posterSizes.get(len - 2));
                 preferencesHelper.putOriginalBaseImageUrl(images.baseUrl +
                         images.posterSizes.get(len - 1));
+            }
+
+            public Observable<Metadata> getObservable(){;
+                Observable<Metadata> metadataObservable = Observable.create(new Observable.OnSubscribe<Metadata>() {
+                    @Override
+                    public void call(Subscriber<? super Metadata> subscriber) {
+                        subscriber.onNext(Metadata.this);
+                        subscriber.onCompleted();
+                    }
+                });
+
+                return metadataObservable;
             }
         }
 

@@ -94,7 +94,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         }
     }*/
 
-    public void getConfigurationAndLoadMovies() {
+    /*public void getConfigurationAndLoadMovies() {
         mSubscription = Observable.zip(mDataManager.getConfiguration(), mDataManager.getMovies(),
                 new Func2<TMDbApi.Response.Metadata, TMDbApi.Response.MovieResponse,
                         List<Movie>>() {
@@ -102,7 +102,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                     public List<Movie> call(TMDbApi.Response.Metadata metadata,
                                             TMDbApi.Response.MovieResponse movieResponse) {
                         metadata.save(mPreferenceHelper);
-                        mDataManager.getMovieDao().insertOrReplaceInTx(movieResponse.getResults());
+                        //mDataManager.getMovieDao().insertOrReplaceInTx(movieResponse.getResults());
                         return movieResponse.getResults();
                     }
                 })
@@ -140,9 +140,46 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                         }
                     }
                 });
+    }*/
+
+    public void getConfigurationAndLoadMovies() {
+        mSubscription = Observable.combineLatest(mDataManager.getConfiguration(), mDataManager.getMovies(),
+                new Func2<TMDbApi.Response.Metadata, TMDbApi.Response.MovieResponse,
+                        List<Movie>>() {
+                    @Override
+                    public List<Movie> call(TMDbApi.Response.Metadata metadata,
+                                            TMDbApi.Response.MovieResponse movieResponse) {
+                        if (metadata.getImages()!=null) metadata.save(mPreferenceHelper);
+                        return movieResponse.getResults();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Movie>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getMvpView().showMovieProgress(false);
+                        getMvpView().showMovieLoadError(e);
+                    }
+
+                    @Override
+                    public void onNext(List<Movie> movies) {
+                        getMvpView().showMovieProgress(false);
+
+                        if (movies.isEmpty()) {
+                            getMvpView().showEmptyMessage();
+                        } else {
+                            getMvpView().showMovies(movies);
+                        }
+                    }
+                });
     }
 
-    public void getMoviesFromDb(){
+    /*public void getMoviesFromDb(){
         mSubscription = mDataManager.getMovieDao().loadAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -168,5 +205,5 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                         }
                     }
                 });
-    }
+    }*/
 }

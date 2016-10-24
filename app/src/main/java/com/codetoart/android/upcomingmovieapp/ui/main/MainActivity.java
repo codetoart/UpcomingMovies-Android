@@ -50,11 +50,12 @@ public class MainActivity extends BaseActivity implements MainMvpView,
     }
 
     private void loadMovies(){
-        if (NetworkUtil.isNetworkConnected(this)){
+        mMainPresenter.getConfigurationAndLoadMovies();
+        /*if (NetworkUtil.isNetworkConnected(this)){
             mMainPresenter.getConfigurationAndLoadMovies();
         } else {
             mMainPresenter.getMoviesFromDb();
-        }
+        }*/
     }
 
     @Override

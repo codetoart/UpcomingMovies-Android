@@ -13,6 +13,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * Created by mahavir on 9/1/16.
@@ -62,18 +64,43 @@ public class DataManager {
     }*/
 
     public Observable<TMDbApi.Response.Metadata> getConfiguration() {
-        return mTMDbApi.getConfiguration(TMDbApi.API_KEY);
+        return mTMDbApi.getConfiguration(TMDbApi.API_KEY)
+                .doOnNext(new Action1<TMDbApi.Response.Metadata>() {
+                    @Override
+                    public void call(TMDbApi.Response.Metadata metadata) {
+                        metadata.save(mPreferencesHelper);
+                    }
+                })
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends TMDbApi.Response.Metadata>>() {
+                    @Override
+                    public Observable<? extends TMDbApi.Response.Metadata> call(Throwable throwable) {
+                        TMDbApi.Response.Metadata metadata = new TMDbApi.Response.Metadata();
+                        return metadata.getObservable();
+                    }
+                })
+                .distinct();
     }
 
     public Observable<TMDbApi.Response.MovieResponse> getMovies() {
-        return mTMDbApi.upcomingMovies(TMDbApi.API_KEY);
+        return mTMDbApi.upcomingMovies(TMDbApi.API_KEY)
+                .doOnNext(new Action1<TMDbApi.Response.MovieResponse>() {
+                    @Override
+                    public void call(TMDbApi.Response.MovieResponse movieResponse) {
+                        for(Movie movie : movieResponse.getResults()){
+                            mDbHelper.insertOrReplace(movie);
+                        }
+                    }
+                })
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends TMDbApi.Response.MovieResponse>>() {
+                    @Override
+                    public Observable<? extends TMDbApi.Response.MovieResponse> call(Throwable throwable) {
+                        return mDbHelper.getLocalMovies(throwable);
+                    }
+                })
+                .distinct();
     }
 
     public Observable<TMDbApi.Response.ImageResponse> getImages(String movieId) {
         return mTMDbApi.getImages(movieId, TMDbApi.API_KEY);
-    }
-
-    public RxDao<Movie, String> getMovieDao(){
-        return mDbHelper.getMovieDao();
     }
 }

@@ -34,4 +34,8 @@ public class UpcomingMovieApplication extends Application {
     public ApplicationComponent getComponent() {
         return mApplicationComponent;
     }
+
+    public void setComponent(ApplicationComponent applicationComponent) {
+        this.mApplicationComponent = applicationComponent;
+    }
 }

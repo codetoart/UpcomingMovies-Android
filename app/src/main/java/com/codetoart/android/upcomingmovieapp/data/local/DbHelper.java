@@ -5,15 +5,20 @@ import android.content.Context;
 import com.codetoart.android.upcomingmovieapp.data.model.DaoMaster;
 import com.codetoart.android.upcomingmovieapp.data.model.DaoSession;
 import com.codetoart.android.upcomingmovieapp.data.model.Movie;
+import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 import com.codetoart.android.upcomingmovieapp.injection.ApplicationContext;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.rx.RxDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import rx.Observable;
+import rx.Subscriber;
 
 
 /**
@@ -38,4 +43,27 @@ public class DbHelper {
         return mDaoSession.getMovieDao().rx();
     }
 
+    public Observable<TMDbApi.Response.MovieResponse> getLocalMovies(final Throwable error){
+        ArrayList<Movie> movies = (ArrayList<Movie>) mDaoSession.getMovieDao().loadAll();
+        final TMDbApi.Response.MovieResponse movieResponse = new TMDbApi.Response.MovieResponse();
+        movieResponse.setResults(movies);
+
+        Observable<TMDbApi.Response.MovieResponse> movieResponseObservable = Observable.create(new Observable.OnSubscribe<TMDbApi.Response.MovieResponse>() {
+            @Override
+            public void call(Subscriber<? super TMDbApi.Response.MovieResponse> subscriber) {
+                if (!movieResponse.getResults().isEmpty()){
+                    subscriber.onNext(movieResponse);
+                    subscriber.onCompleted();
+                } else {
+                    subscriber.onError(error);
+                }
+            }
+        });
+
+        return movieResponseObservable;
+    }
+
+    public void insertOrReplace(Movie movie){
+        mDaoSession.getMovieDao().insertOrReplace(movie);
+    }
 }
