@@ -75,10 +75,9 @@ public class DataManager {
                     @Override
                     public Observable<? extends TMDbApi.Response.Metadata> call(Throwable throwable) {
                         TMDbApi.Response.Metadata metadata = new TMDbApi.Response.Metadata();
-                        return metadata.getObservable();
+                        return Observable.just(metadata);
                     }
-                })
-                .distinct();
+                });
     }
 
     public Observable<TMDbApi.Response.MovieResponse> getMovies() {
@@ -96,8 +95,22 @@ public class DataManager {
                     public Observable<? extends TMDbApi.Response.MovieResponse> call(Throwable throwable) {
                         return mDbHelper.getLocalMovies(throwable);
                     }
+                });
+
+        /*return mTMDbApi.upcomingMovies(TMDbApi.API_KEY)
+                .map(new Func1<TMDbApi.Response.MovieResponse, List<Movie>>() {
+                    @Override
+                    public List<Movie> call(TMDbApi.Response.MovieResponse movieResponse) {
+                        return movieResponse.getResults();
+                    }
                 })
-                .distinct();
+                .flatMap(new Func1<List<Movie>, Observable<Movie>>() {
+                    @Override
+                    public Observable<Movie> call(List<Movie> movies) {
+                        return Observable.from(movies);
+                    }
+                })
+                .su*/
     }
 
     public Observable<TMDbApi.Response.ImageResponse> getImages(String movieId) {

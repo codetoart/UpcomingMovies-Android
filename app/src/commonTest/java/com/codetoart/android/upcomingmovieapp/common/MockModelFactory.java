@@ -69,7 +69,7 @@ public class MockModelFactory {
         movieResponse.setPage(random.nextInt(10));
         movieResponse.setTotalPages(random.nextInt(100));
         movieResponse.setResults((ArrayList<Movie>) newMovieList(20));
-        movieResponse.setTotalResults(random.nextInt(2000));
+        movieResponse.setTotalResults(random.nextInt(200));
         return movieResponse;
     }
 

@@ -126,18 +126,6 @@ public interface TMDbApi {
                 preferencesHelper.putOriginalBaseImageUrl(images.baseUrl +
                         images.posterSizes.get(len - 1));
             }
-
-            public Observable<Metadata> getObservable(){;
-                Observable<Metadata> metadataObservable = Observable.create(new Observable.OnSubscribe<Metadata>() {
-                    @Override
-                    public void call(Subscriber<? super Metadata> subscriber) {
-                        subscriber.onNext(Metadata.this);
-                        subscriber.onCompleted();
-                    }
-                });
-
-                return metadataObservable;
-            }
         }
 
         public static class MovieResponse {

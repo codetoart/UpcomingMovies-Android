@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import rx.Observable;
+import rx.observers.TestSubscriber;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
