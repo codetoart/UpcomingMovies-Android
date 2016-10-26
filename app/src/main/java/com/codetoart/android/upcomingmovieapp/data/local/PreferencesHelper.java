@@ -40,22 +40,6 @@ public class PreferencesHelper {
         mPref.edit().clear().apply();
     }
 
-    public void putMovies(List<Movie> movies) throws JsonProcessingException {
-        ObjectWriter ow = mObjectMapper.writer().withDefaultPrettyPrinter();
-        mPref.edit().putString(PREF_KEY_MOVIES, ow.writeValueAsString(movies)).apply();
-    }
-
-    @Nullable
-    public List<Movie> getMovies() throws IOException {
-        String moviesJson = mPref.getString(PREF_KEY_MOVIES, null);
-        if (moviesJson != null) {
-            return mObjectMapper.readValue(moviesJson, new TypeReference<List<Movie>>() {
-            });
-        }
-
-        return null;
-    }
-
     public void putThumbnailBaseImageUrl(String imageUrl) {
         mPref.edit().putString(PREF_KEY_THUMBNAIL_BASE_IMAGE_URL, imageUrl).apply();
     }
@@ -79,17 +63,4 @@ public class PreferencesHelper {
     public String getOriginalBaseImageUrl() {
         return mPref.getString(PREF_KEY_ORIGINAL_BASE_IMAGE_URL, null);
     }
-    /*public Observable<List<Venue>> getVenuesAsObservable() {
-        return Observable.create(new Observable.OnSubscribe<List<Venue>>() {
-            @Override
-            public void call(Subscriber<? super List<Venue>> subscriber) {
-                List<Venue> venues = getVenues();
-                if (venues != null) {
-                    subscriber.onNext(venues);
-                }
-                subscriber.onCompleted();
-            }
-        });
-    }*/
-
 }

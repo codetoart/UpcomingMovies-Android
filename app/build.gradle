@@ -110,5 +110,6 @@ dependencies {
 
     testCompile "junit:junit:$JUNIT_VERSION"
     testCompile "org.mockito:mockito-core:$MOCKITO_VERSION"
+    testCompile 'org.robolectric:robolectric:3.0'
     testApt "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
 }
