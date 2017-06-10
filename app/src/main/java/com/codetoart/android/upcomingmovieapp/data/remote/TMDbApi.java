@@ -27,7 +27,6 @@ import rx.Subscriber;
  * Created by Mahavir on 9/1/16.
  */
 public interface TMDbApi {
-    public String ENDPOINT = "https://api.themoviedb.org/3/";
     public static final String API_KEY = "b7cd3340a794e5a2f35e3abb820b497f";
 
     /*@GET("configuration")
@@ -44,33 +43,6 @@ public interface TMDbApi {
     @GET("movie/{movie_id}/images")
     public Observable<Response.ImageResponse> getImages(@Path("movie_id")
                                                  String movieId, @Query("api_key") String apiKey);
-
-    /******** Factory class that sets up a new TMDbApi *******/
-    class Factory {
-
-        public static TMDbApi makeTMDbApi(Context context) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY
-                    : HttpLoggingInterceptor.Level.NONE);
-
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .addInterceptor(new UnauthorisedInterceptor(context))
-                    .addInterceptor(logging)
-                    .build();
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(TMDbApi.ENDPOINT)
-                    .client(okHttpClient)
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .addConverterFactory(JacksonConverterFactory.create(objectMapper))
-                    .build();
-            return retrofit.create(TMDbApi.class);
-        }
-
-    }
 
     class Response {
         public static class ImageMetadata {

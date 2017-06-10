@@ -3,14 +3,17 @@ package com.codetoart.android.upcomingmovieapp.injection.module;
 import android.app.Application;
 import android.content.Context;
 
+import com.codetoart.android.upcomingmovieapp.data.remote.RetrofitFactory;
 import com.codetoart.android.upcomingmovieapp.data.remote.TMDbApi;
 import com.codetoart.android.upcomingmovieapp.injection.ApplicationContext;
 import com.squareup.otto.Bus;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit2.Retrofit;
 
 /**
  * Created by mahavir on 9/1/16.
@@ -34,11 +37,18 @@ public class ApplicationModule {
         return mApplication;
     }
 
+    @Singleton
+    @Provides
+    Retrofit provideRetrofit() {
+        return RetrofitFactory.getRetrofit(mApplication);
+    }
+
     @Provides
     @Singleton
-    TMDbApi provideTMDbApi() {
-        return TMDbApi.Factory.makeTMDbApi(mApplication);
+    public TMDbApi provideTMDbApi(Retrofit retrofit) {
+        return retrofit.create(TMDbApi.class);
     }
+
 
     @Provides
     @Singleton
