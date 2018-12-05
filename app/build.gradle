@@ -20,6 +20,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    Properties properties = new Properties()
+    properties.load(new FileInputStream(rootProject.file("local.properties")))
+
+    buildTypes.each {
+        it.buildConfigField("String", "TMDB_API_KEY", properties["TMDB_API_KEY"])
+    }
 }
 
 dependencies {
@@ -28,9 +35,21 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$versions.appcompat"
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation "androidx.test.ext:junit:1.0.0"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
     implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+
+    // Serialization / Deserialization libraries
+    implementation "com.fasterxml.jackson.core:jackson-core:$versions.jackson"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$versions.jackson"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$versions.jackson"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$versions.jackson"
+    implementation "com.google.code.gson:gson:$versions.gson"
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    implementation "com.squareup.retrofit2:converter-jackson:$versions.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
 }

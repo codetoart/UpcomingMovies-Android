@@ -17,4 +17,8 @@ versions.material = "1.0.0"
 
 versions.lifecycle = "2.0.0"
 
+versions.retrofit = "2.5.0"
+versions.jackson = "2.9.7"
+versions.gson = "2.8.5"
+
 ext.versions = versions

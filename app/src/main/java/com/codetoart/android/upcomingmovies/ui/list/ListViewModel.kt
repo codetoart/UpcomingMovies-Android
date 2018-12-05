@@ -1,4 +1,4 @@
-package com.codetoart.android.upcomingmovies.presentation.list
+package com.codetoart.android.upcomingmovies.ui.list
 
 import androidx.lifecycle.ViewModel
 

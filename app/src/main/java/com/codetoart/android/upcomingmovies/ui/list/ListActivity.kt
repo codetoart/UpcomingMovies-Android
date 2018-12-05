@@ -1,4 +1,4 @@
-package com.codetoart.android.upcomingmovies.presentation.list
+package com.codetoart.android.upcomingmovies.ui.list
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
