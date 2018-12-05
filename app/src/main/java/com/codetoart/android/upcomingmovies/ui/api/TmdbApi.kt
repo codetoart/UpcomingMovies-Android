@@ -1,6 +1,6 @@
 package com.codetoart.android.upcomingmovies.ui.api
 
-import com.codetoart.android.upcomingmovies.ui.model.UpcomingResponse
+import com.codetoart.android.upcomingmovies.ui.model.UpcomingMovieResponse
 import okhttp3.HttpUrl
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -11,8 +11,9 @@ import retrofit2.http.Query
 
 interface TmdbApi {
 
-    @GET("movie/upcoming") @GsonConverter
-    fun getUpcomingMovies(@Query("api_key") apiKey: String, @Query("page") page: Int): Call<UpcomingResponse>
+    @GET("movie/upcoming")
+    @GsonConverter
+    fun getUpcomingMovies(@Query("api_key") apiKey: String, @Query("page") page: Int): Call<UpcomingMovieResponse>
 
     companion object {
 
@@ -31,6 +32,15 @@ interface TmdbApi {
                 )
                 .build()
                 .create(TmdbApi::class.java)
+        }
+
+        var singleton: TmdbApi? = null
+
+        fun get(): TmdbApi {
+            if (singleton == null) {
+                singleton = create()
+            }
+            return singleton!!
         }
     }
 }

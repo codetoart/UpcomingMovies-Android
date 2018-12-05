@@ -21,6 +21,10 @@ android {
         }
     }
 
+    lintOptions {
+        lintConfig file("lint.xml")
+    }
+
     Properties properties = new Properties()
     properties.load(new FileInputStream(rootProject.file("local.properties")))
 
@@ -38,7 +42,6 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:1.0.0"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
     implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
 
     // Serialization / Deserialization libraries
@@ -52,4 +55,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-jackson:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+    implementation "androidx.paging:paging-runtime:$versions.paging"
 }
