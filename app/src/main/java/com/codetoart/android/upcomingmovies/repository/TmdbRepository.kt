@@ -3,8 +3,8 @@ package com.codetoart.android.upcomingmovies.repository
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import com.codetoart.android.upcomingmovies.api.TmdbApi
-import com.codetoart.android.upcomingmovies.model.Movie
 import com.codetoart.android.upcomingmovies.model.Listing
+import com.codetoart.android.upcomingmovies.model.Movie
 import java.util.concurrent.Executor
 
 class TmdbRepository(
@@ -13,13 +13,14 @@ class TmdbRepository(
 ) {
 
     companion object {
+
+        @Volatile
         private var singleton: TmdbRepository? = null
-        fun get(tmdbApi: TmdbApi, networkExecutor: Executor): TmdbRepository {
-            if (singleton == null) {
-                singleton = TmdbRepository(tmdbApi, networkExecutor)
+
+        fun get(tmdbApi: TmdbApi, networkExecutor: Executor): TmdbRepository =
+            singleton ?: synchronized(this) {
+                singleton ?: TmdbRepository(tmdbApi, networkExecutor).also { singleton = it }
             }
-            return singleton!!
-        }
     }
 
     fun getUpcomingMoviesPagedList(pageSize: Int): Listing<Movie> {

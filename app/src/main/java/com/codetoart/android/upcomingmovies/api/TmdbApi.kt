@@ -41,13 +41,12 @@ interface TmdbApi {
                 .create(TmdbApi::class.java)
         }
 
-        var singleton: TmdbApi? = null
+        @Volatile
+        private var singleton: TmdbApi? = null
 
-        fun get(): TmdbApi {
-            if (singleton == null) {
-                singleton = create()
+        fun get(): TmdbApi =
+            singleton ?: synchronized(this) {
+                singleton ?: create().also { singleton = it }
             }
-            return singleton!!
-        }
     }
 }
