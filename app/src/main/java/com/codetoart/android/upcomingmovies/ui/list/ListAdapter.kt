@@ -4,18 +4,13 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.codetoart.android.upcomingmovies.ui.model.Movie
+import com.codetoart.android.upcomingmovies.R
+import com.codetoart.android.upcomingmovies.model.Movie
+import com.codetoart.android.upcomingmovies.model.NetworkState
 
-class ListAdapter : PagedListAdapter<Movie, RecyclerView.ViewHolder>(DIFF_UTIL) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return UpcomingMovieHolder.create(parent)
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val upcomingMovieHolder = holder as UpcomingMovieHolder
-        upcomingMovieHolder.bind(getItem(position))
-    }
+class ListAdapter(
+    private val retryCallback: () -> Unit = {}
+) : PagedListAdapter<Movie, RecyclerView.ViewHolder>(DIFF_UTIL) {
 
     companion object {
         val DIFF_UTIL = object : DiffUtil.ItemCallback<Movie>() {
@@ -31,5 +26,50 @@ class ListAdapter : PagedListAdapter<Movie, RecyclerView.ViewHolder>(DIFF_UTIL) 
         }
     }
 
+    private var networkState: NetworkState? = null
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+
+        return when (viewType) {
+            R.layout.list_item -> UpcomingMovieHolder.create(parent)
+            R.layout.network_state_list_item -> NetworkStateItemViewHolder.create(parent, retryCallback)
+            else -> throw IllegalArgumentException("-> Unknown view type: $viewType")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+        when (getItemViewType(position)) {
+            R.layout.list_item -> (holder as UpcomingMovieHolder).bind(getItem(position))
+            R.layout.network_state_list_item -> (holder as NetworkStateItemViewHolder).bindTo(networkState)
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (hasExtraRow() && position == itemCount - 1) {
+            R.layout.network_state_list_item
+        } else {
+            R.layout.list_item
+        }
+    }
+
+    override fun getItemCount(): Int = super.getItemCount() + if (hasExtraRow()) 1 else 0
+
+    private fun hasExtraRow() = networkState != null && networkState != NetworkState.LOADED
+
+    fun setNetworkState(newNetworkState: NetworkState?) {
+        val previousState = this.networkState
+        val hadExtraRow = hasExtraRow()
+        this.networkState = newNetworkState
+        val hasExtraRow = hasExtraRow()
+        if (hadExtraRow != hasExtraRow) {
+            if (hadExtraRow) {
+                notifyItemRemoved(super.getItemCount())
+            } else {
+                notifyItemInserted(super.getItemCount())
+            }
+        } else if (hasExtraRow && previousState != newNetworkState) {
+            notifyItemChanged(itemCount - 1)
+        }
+    }
 }

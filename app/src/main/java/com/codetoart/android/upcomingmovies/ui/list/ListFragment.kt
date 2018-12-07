@@ -35,10 +35,18 @@ class ListFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
 
-        listAdapter = ListAdapter()
+        listAdapter = ListAdapter {
+            viewModel.retry()
+        }
         recyclerView.adapter = listAdapter
-        viewModel.mediatorLivePagedList.observe(this, Observer {
+
+        viewModel.livePagedList.observe(this, Observer {
             listAdapter.submitList(it)
+        })
+
+        viewModel.networkState.observe(this, Observer {
+            Log.d(LOG_TAG, "-> Network State = $it")
+            listAdapter.setNetworkState(it)
         })
 
         if (savedInstanceState == null)

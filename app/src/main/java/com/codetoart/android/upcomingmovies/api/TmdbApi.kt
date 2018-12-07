@@ -1,6 +1,9 @@
-package com.codetoart.android.upcomingmovies.ui.api
+package com.codetoart.android.upcomingmovies.api
 
-import com.codetoart.android.upcomingmovies.ui.model.UpcomingMovieResponse
+import com.codetoart.android.upcomingmovies.model.UpcomingMovieResponse
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import okhttp3.HttpUrl
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -26,7 +29,11 @@ interface TmdbApi {
                 .baseUrl(httpUrl)
                 .addConverterFactory(
                     QualifiedTypeConverterFactory(
-                        JacksonConverterFactory.create(),
+                        JacksonConverterFactory.create(
+                            ObjectMapper()
+                                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                .registerKotlinModule()
+                        ),
                         GsonConverterFactory.create()
                     )
                 )

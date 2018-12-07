@@ -1,4 +1,4 @@
-package com.codetoart.android.upcomingmovies.ui.api
+package com.codetoart.android.upcomingmovies.api
 
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
