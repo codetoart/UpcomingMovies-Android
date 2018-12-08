@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.codetoart.android.upcomingmovies.model
+package com.codetoart.android.upcomingmovies.data.model
 
 enum class Status {
     RUNNING,

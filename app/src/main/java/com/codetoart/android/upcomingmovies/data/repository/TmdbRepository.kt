@@ -1,10 +1,10 @@
-package com.codetoart.android.upcomingmovies.repository
+package com.codetoart.android.upcomingmovies.data.repository
 
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
-import com.codetoart.android.upcomingmovies.api.TmdbApi
-import com.codetoart.android.upcomingmovies.model.Listing
-import com.codetoart.android.upcomingmovies.model.Movie
+import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
+import com.codetoart.android.upcomingmovies.data.model.Listing
+import com.codetoart.android.upcomingmovies.data.model.Movie
 import java.util.concurrent.Executor
 
 class TmdbRepository(

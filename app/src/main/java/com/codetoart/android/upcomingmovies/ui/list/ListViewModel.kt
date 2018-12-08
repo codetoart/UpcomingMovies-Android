@@ -6,10 +6,10 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.paging.PagedList
-import com.codetoart.android.upcomingmovies.model.Listing
-import com.codetoart.android.upcomingmovies.model.Movie
-import com.codetoart.android.upcomingmovies.model.NetworkState
-import com.codetoart.android.upcomingmovies.repository.TmdbRepository
+import com.codetoart.android.upcomingmovies.data.model.Listing
+import com.codetoart.android.upcomingmovies.data.model.Movie
+import com.codetoart.android.upcomingmovies.data.model.NetworkState
+import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 
 class ListViewModel(
     app: Application,

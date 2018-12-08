@@ -1,4 +1,4 @@
-package com.codetoart.android.upcomingmovies.model
+package com.codetoart.android.upcomingmovies.data.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.annotations.SerializedName

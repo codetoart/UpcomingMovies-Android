@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.codetoart.android.upcomingmovies.AppExecutors
 import com.codetoart.android.upcomingmovies.R
-import com.codetoart.android.upcomingmovies.api.TmdbApi
-import com.codetoart.android.upcomingmovies.repository.TmdbRepository
+import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
+import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 import kotlinx.android.synthetic.main.list_fragment.*
 
 class ListFragment : Fragment() {

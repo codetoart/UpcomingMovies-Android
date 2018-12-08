@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.codetoart.android.upcomingmovies.R
-import com.codetoart.android.upcomingmovies.model.Movie
+import com.codetoart.android.upcomingmovies.data.model.Movie
 
 class UpcomingMovieHolder(view: View) : RecyclerView.ViewHolder(view) {
 

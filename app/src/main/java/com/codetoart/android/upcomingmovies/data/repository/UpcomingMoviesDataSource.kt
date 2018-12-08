@@ -1,13 +1,13 @@
-package com.codetoart.android.upcomingmovies.repository
+package com.codetoart.android.upcomingmovies.data.repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.codetoart.android.upcomingmovies.BuildConfig
-import com.codetoart.android.upcomingmovies.api.TmdbApi
-import com.codetoart.android.upcomingmovies.model.Movie
-import com.codetoart.android.upcomingmovies.model.UpcomingMovieResponse
-import com.codetoart.android.upcomingmovies.model.NetworkState
+import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
+import com.codetoart.android.upcomingmovies.data.model.Movie
+import com.codetoart.android.upcomingmovies.data.model.UpcomingMovieResponse
+import com.codetoart.android.upcomingmovies.data.model.NetworkState
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

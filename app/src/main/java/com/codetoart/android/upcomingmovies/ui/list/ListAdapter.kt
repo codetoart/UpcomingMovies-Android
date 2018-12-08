@@ -5,8 +5,8 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.codetoart.android.upcomingmovies.R
-import com.codetoart.android.upcomingmovies.model.Movie
-import com.codetoart.android.upcomingmovies.model.NetworkState
+import com.codetoart.android.upcomingmovies.data.model.Movie
+import com.codetoart.android.upcomingmovies.data.model.NetworkState
 
 class ListAdapter(
     private val retryCallback: () -> Unit = {}

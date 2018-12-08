@@ -24,8 +24,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.codetoart.android.upcomingmovies.R
-import com.codetoart.android.upcomingmovies.model.NetworkState
-import com.codetoart.android.upcomingmovies.model.Status
+import com.codetoart.android.upcomingmovies.data.model.NetworkState
+import com.codetoart.android.upcomingmovies.data.model.Status
 
 class NetworkStateItemViewHolder(
     view: View,

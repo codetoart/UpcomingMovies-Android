@@ -1,7 +1,7 @@
 package com.codetoart.android.upcomingmovies
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.codetoart.android.upcomingmovies.api.TmdbApi
+import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
