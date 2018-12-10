@@ -20,6 +20,9 @@ versions.jackson = "2.9.7"
 versions.gson = "2.8.5"
 
 versions.lifecycle = "2.0.0"
+versions.archCore = "2.0.0"
 versions.paging = "2.0.0"
+
+versions.mockito = "2.23.4"
 
 ext.versions = versions

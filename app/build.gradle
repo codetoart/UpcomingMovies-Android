@@ -38,9 +38,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
     implementation "androidx.appcompat:appcompat:$versions.appcompat"
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
+
+    // Testing dependencies
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.test.ext:junit:1.0.0"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    testImplementation "androidx.arch.core:core-testing:$versions.archCore"
+    testImplementation "org.mockito:mockito-core:$versions.mockito"
 
     implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
 
