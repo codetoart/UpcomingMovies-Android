@@ -1,31 +1,43 @@
 package com.codetoart.android.upcomingmovies.data.repository
 
+import android.util.Log
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
-import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
+import com.codetoart.android.upcomingmovies.BuildConfig
+import com.codetoart.android.upcomingmovies.data.local.PreferenceHelper
+import com.codetoart.android.upcomingmovies.data.model.Configuration
 import com.codetoart.android.upcomingmovies.data.model.Listing
 import com.codetoart.android.upcomingmovies.data.model.Movie
+import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executor
 
 class TmdbRepository(
     private val tmdbApi: TmdbApi,
-    private val networkExecutor: Executor
+    private val networkExecutor: Executor,
+    private val preferenceHelper: PreferenceHelper
 ) {
 
     companion object {
 
+        val LOG_TAG: String = TmdbRepository::class.java.simpleName
+
         @Volatile
         private var singleton: TmdbRepository? = null
 
-        fun get(tmdbApi: TmdbApi, networkExecutor: Executor): TmdbRepository =
+        fun get(): TmdbRepository =
+            singleton ?: throw Exception("-> Not yet initialised")
+
+        fun init(tmdbApi: TmdbApi, networkExecutor: Executor, preferenceHelper: PreferenceHelper): TmdbRepository =
             singleton ?: synchronized(this) {
-                singleton ?: TmdbRepository(tmdbApi, networkExecutor).also { singleton = it }
+                singleton ?: TmdbRepository(tmdbApi, networkExecutor, preferenceHelper).also { singleton = it }
             }
     }
 
-    fun getUpcomingMoviesPagedList(pageSize: Int): Listing<Movie> {
+    fun getUpcomingMoviesPagedList(initialKey: Int, pageSize: Int): Listing<Movie> {
 
-        val sourceFactory = UpcomingMoviesDataSourceFactory(tmdbApi, networkExecutor)
+        val sourceFactory = UpcomingMoviesDataSourceFactory(tmdbApi, initialKey, networkExecutor)
 
         val livePagedListBuilder = LivePagedListBuilder(sourceFactory, pageSize)
         val livePagedList = livePagedListBuilder.build()
@@ -41,5 +53,35 @@ class TmdbRepository(
                 sourceFactory.sourceLiveData.value?.retryFailedCall()
             }
         )
+    }
+
+    fun fetchNewConfiguration(): Observable<Configuration> {
+
+        return tmdbApi.getObservableConfiguration(BuildConfig.TMDB_API_KEY)
+            .doOnNext { configuration ->
+                Log.v(LOG_TAG, "-> fetchNewConfiguration -> onSuccess")
+                preferenceHelper.setConfiguration(configuration)
+            }.doOnError { t ->
+                Log.e(LOG_TAG, "-> fetchNewConfiguration -> onError -> ", t)
+            }
+    }
+
+    fun getSingleConfiguration(): Observable<Configuration> {
+
+        return Observable.create<Configuration> { source ->
+            val savedConfiguration = PreferenceHelper.get().getConfiguration()
+            if (savedConfiguration == null) {
+                fetchNewConfiguration()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe { configuration ->
+                        source.onNext(configuration)
+                        source.onComplete()
+                    }
+            } else {
+                source.onNext(savedConfiguration)
+                source.onComplete()
+            }
+        }
     }
 }

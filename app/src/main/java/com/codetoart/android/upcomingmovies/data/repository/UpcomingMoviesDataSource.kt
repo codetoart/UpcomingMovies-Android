@@ -1,20 +1,19 @@
 package com.codetoart.android.upcomingmovies.data.repository
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.codetoart.android.upcomingmovies.BuildConfig
-import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
 import com.codetoart.android.upcomingmovies.data.model.Movie
-import com.codetoart.android.upcomingmovies.data.model.UpcomingMovieResponse
 import com.codetoart.android.upcomingmovies.data.model.NetworkState
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executor
 
 class UpcomingMoviesDataSource(
     private val tmdbApi: TmdbApi,
+    private val initialKey: Int,
     private val retryExecutor: Executor
 ) : PageKeyedDataSource<Int, Movie>() {
 
@@ -27,71 +26,65 @@ class UpcomingMoviesDataSource(
 
     val networkState = MutableLiveData<NetworkState>()
 
+    @SuppressLint("CheckResult")
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Movie>) {
         Log.v(LOG_TAG, "-> loadInitial")
 
         networkState.postValue(NetworkState.LOADING)
-        try {
-            val response = tmdbApi.getUpcomingMovies(BuildConfig.TMDB_API_KEY, 1).execute()
-            val upcomingMovieResponse = response.body()!!
-            val nextPageKey = if (upcomingMovieResponse.page == upcomingMovieResponse.totalPages) {
-                null
-            } else {
-                upcomingMovieResponse.page + 1
-            }
-            networkState.postValue(NetworkState.LOADED)
-            callback.onResult(upcomingMovieResponse.results, null, nextPageKey)
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "-> loadInitial", e)
-            val error = NetworkState.error(e.message ?: "Unknown error")
-            networkState.postValue(error)
-            retry = {
-                loadInitial(params, callback)
-            }
-        }
+        tmdbApi.getObservableUpcomingMovies(BuildConfig.TMDB_API_KEY, initialKey)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe({ upcomingMovieResponse ->
+                Log.v(LOG_TAG, "-> loadInitial -> onNext -> PageKey = $initialKey")
+                val nextPageKey = if (upcomingMovieResponse.page == upcomingMovieResponse.totalPages) {
+                    null
+                } else {
+                    upcomingMovieResponse.page + 1
+                }
+                networkState.postValue(NetworkState.LOADED)
+                callback.onResult(upcomingMovieResponse.results, null, nextPageKey)
+            }, { t ->
+                Log.e(LOG_TAG, "-> loadInitial -> onError -> PageKey = $initialKey", t)
+                networkState.postValue(NetworkState.error(t.message ?: "Unknown error"))
+                retry = {
+                    loadInitial(params, callback)
+                }
+            })
     }
 
+    @SuppressLint("CheckResult")
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Movie>) {
         //Log.v(LOG_TAG, "-> loadAfter -> PageKey = ${params.key}")
 
         networkState.postValue(NetworkState.LOADING)
-        tmdbApi.getUpcomingMovies(BuildConfig.TMDB_API_KEY, params.key)
-            .enqueue(object : Callback<UpcomingMovieResponse> {
-
-                override fun onFailure(call: Call<UpcomingMovieResponse>, t: Throwable) {
-                    Log.e(LOG_TAG, "-> loadAfter -> onFailure -> PageKey = ${params.key}", t)
-                    networkState.postValue(NetworkState.error(t.message ?: "Unknown error"))
-                    retry = {
-                        loadAfter(params, callback)
-                    }
+        tmdbApi.getObservableUpcomingMovies(BuildConfig.TMDB_API_KEY, params.key)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe({ upcomingMovieResponse ->
+                Log.v(LOG_TAG, "-> loadAfter -> onNext -> PageKey = ${params.key}")
+                val nextPageKey = if (upcomingMovieResponse.page == upcomingMovieResponse.totalPages) {
+                    null
+                } else {
+                    upcomingMovieResponse.page + 1
                 }
-
-                override fun onResponse(call: Call<UpcomingMovieResponse>, response: Response<UpcomingMovieResponse>) {
-                    Log.v(LOG_TAG, "-> loadAfter -> onResponse -> PageKey = ${params.key}")
-                    if (response.isSuccessful) {
-                        val upcomingMovieResponse = response.body()!!
-                        val nextPageKey = if (upcomingMovieResponse.page == upcomingMovieResponse.totalPages) {
-                            null
-                        } else {
-                            upcomingMovieResponse.page + 1
-                        }
-                        networkState.postValue(NetworkState.LOADED)
-                        callback.onResult(upcomingMovieResponse.results, nextPageKey)
-                    } else {
-                        networkState.postValue(NetworkState.error("Error code: ${response.code()}"))
-                        retry = {
-                            loadAfter(params, callback)
-                        }
-                    }
+                networkState.postValue(NetworkState.LOADED)
+                callback.onResult(upcomingMovieResponse.results, nextPageKey)
+            }, { t ->
+                Log.e(LOG_TAG, "-> loadAfter -> onError -> PageKey = ${params.key}", t)
+                networkState.postValue(NetworkState.error(t.message ?: "Unknown error"))
+                retry = {
+                    loadAfter(params, callback)
                 }
             })
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Movie>) {
-        Log.v(LOG_TAG, "-> loadBefore -> PageKey = ${params.key}")
+        Log.w(LOG_TAG, "-> loadBefore -> PageKey = ${params.key}, Not yet implemented")
     }
 
     fun retryFailedCall() {
+        Log.v(LOG_TAG, "-> retryFailedCall")
+
         val prevRetry = retry
         retry = null
         prevRetry?.let {

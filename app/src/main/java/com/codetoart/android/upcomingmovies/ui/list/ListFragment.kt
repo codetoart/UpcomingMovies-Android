@@ -10,9 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.codetoart.android.upcomingmovies.AppExecutors
 import com.codetoart.android.upcomingmovies.R
-import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 import kotlinx.android.synthetic.main.list_fragment.*
 
@@ -63,11 +61,8 @@ class ListFragment : Fragment() {
 
         return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                val tmdbApi = TmdbApi.get()
-                val appExecutors = AppExecutors.get()
-                val tmdbRepository = TmdbRepository.get(tmdbApi, appExecutors.networkExecutor)
                 @Suppress("UNCHECKED_CAST")
-                return ListViewModel(activity!!.application, tmdbRepository) as T
+                return ListViewModel(activity!!.application, TmdbRepository.get()) as T
             }
         }).get(ListViewModel::class.java)
     }

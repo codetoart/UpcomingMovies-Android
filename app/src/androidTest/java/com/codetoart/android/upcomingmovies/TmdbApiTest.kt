@@ -14,13 +14,23 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TmdbApiTest {
 
+    val tmdbApi = TmdbApi.get()
+
     @Test
     fun hit_getUpcomingMovies() {
 
-        val tmdbApi = TmdbApi.create()
         val call = tmdbApi.getUpcomingMovies(BuildConfig.TMDB_API_KEY, 1)
         val response = call.execute()
-
         assertEquals(true, response.isSuccessful)
     }
+
+    @Test
+    fun hit_getConfiguration() {
+
+        val call = tmdbApi.getConfiguration(BuildConfig.TMDB_API_KEY)
+        val response = call.execute()
+        assertEquals(true, response.isSuccessful)
+    }
+
+    // TODO -> Add Observable Network tests
 }

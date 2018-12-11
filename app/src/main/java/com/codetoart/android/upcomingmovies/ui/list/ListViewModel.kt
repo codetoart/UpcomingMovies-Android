@@ -28,7 +28,7 @@ class ListViewModel(
     fun getUpcomingMovies() {
         Log.v(LOG_TAG, "-> getUpcomingMovies")
 
-        listing = tmdbRepository.getUpcomingMoviesPagedList(20)
+        listing = tmdbRepository.getUpcomingMoviesPagedList(1, 20)
 
         val livePagedList = listing!!.pagedList
 

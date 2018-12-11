@@ -8,13 +8,14 @@ import java.util.concurrent.Executor
 
 class UpcomingMoviesDataSourceFactory(
     private val tmdbApi: TmdbApi,
+    private val initialKey: Int,
     private val retryExecutor: Executor
 ) : DataSource.Factory<Int, Movie>() {
 
     val sourceLiveData = MutableLiveData<UpcomingMoviesDataSource>()
 
     override fun create(): DataSource<Int, Movie> {
-        val source = UpcomingMoviesDataSource(tmdbApi, retryExecutor)
+        val source = UpcomingMoviesDataSource(tmdbApi, initialKey, retryExecutor)
         sourceLiveData.postValue(source)
         return source
     }

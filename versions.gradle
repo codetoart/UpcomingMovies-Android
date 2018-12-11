@@ -25,4 +25,8 @@ versions.paging = "2.0.0"
 
 versions.mockito = "2.23.4"
 
+versions.rxJava = "2.2.4"
+versions.rxAndroid = "2.1.0"
+versions.rxKotlin = "2.3.0"
+
 ext.versions = versions
