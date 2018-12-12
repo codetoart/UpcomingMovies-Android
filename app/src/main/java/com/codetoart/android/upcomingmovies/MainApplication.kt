@@ -1,8 +1,11 @@
 package com.codetoart.android.upcomingmovies
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.multidex.MultiDex
 import com.codetoart.android.upcomingmovies.data.local.PreferenceHelper
+import com.codetoart.android.upcomingmovies.data.local.TmdbDb
 import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 import io.reactivex.disposables.Disposable
@@ -24,10 +27,16 @@ class MainApplication : Application() {
     }
 
     private lateinit var tmdbApi: TmdbApi
+    private lateinit var tmdbDb: TmdbDb
     private lateinit var preferenceHelper: PreferenceHelper
     private lateinit var appExecutors: AppExecutors
     private lateinit var tmdbRepository: TmdbRepository
     private var disposableConfiguration: Disposable? = null
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -36,9 +45,10 @@ class MainApplication : Application() {
         set(this)
 
         tmdbApi = TmdbApi.get()
+        tmdbDb = TmdbDb.init(applicationContext)
         preferenceHelper = PreferenceHelper.init(applicationContext)
         appExecutors = AppExecutors.get()
-        tmdbRepository = TmdbRepository.init(tmdbApi, appExecutors.networkExecutor, preferenceHelper)
+        tmdbRepository = TmdbRepository.init(tmdbApi, tmdbDb, appExecutors.networkExecutor, preferenceHelper)
 
         getConfiguration()
     }

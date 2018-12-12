@@ -7,9 +7,9 @@ data class UpcomingMovieResponse(
 
     val results: List<Movie>,
 
-    val page: Int,
+    val page: Int = -1,
 
     @SerializedName("total_pages")
     @JsonProperty("total_pages")
-    val totalPages: Int
+    val totalPages: Int = -1
 )

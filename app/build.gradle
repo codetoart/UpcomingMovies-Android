@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion versions.androidCompileSdk
     defaultConfig {
@@ -13,6 +15,7 @@ android {
         versionCode versions.projectVersionCode
         versionName versions.projectVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -38,6 +41,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
     implementation "androidx.appcompat:appcompat:$versions.appcompat"
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
+
+    implementation 'com.android.support:multidex:1.0.3'
 
     // Testing dependencies
     testImplementation 'junit:junit:4.12'
@@ -68,4 +73,8 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
     implementation "androidx.paging:paging-runtime:$versions.paging"
+
+    // Room
+    implementation "androidx.room:room-runtime:$versions.room"
+    kapt "androidx.room:room-compiler:$versions.room"
 }

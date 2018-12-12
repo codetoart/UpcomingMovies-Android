@@ -5,14 +5,20 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.codetoart.android.upcomingmovies.BuildConfig
+import com.codetoart.android.upcomingmovies.data.local.TmdbDb
 import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.model.NetworkState
+import com.codetoart.android.upcomingmovies.data.model.UpcomingMovieResponse
 import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
+import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executor
 
 class UpcomingMoviesDataSource(
     private val tmdbApi: TmdbApi,
+    private val tmdbDb: TmdbDb,
     private val initialKey: Int,
     private val retryExecutor: Executor
 ) : PageKeyedDataSource<Int, Movie>() {
@@ -32,15 +38,35 @@ class UpcomingMoviesDataSource(
 
         networkState.postValue(NetworkState.LOADING)
         tmdbApi.getObservableUpcomingMovies(BuildConfig.TMDB_API_KEY, initialKey)
+
+            .doOnNext { upcomingMovieResponse ->
+                Log.v(LOG_TAG, "-> loadInitial -> doOnNext -> PageKey = $initialKey")
+                tmdbDb.upcomingMovieDao().deleteAllRows()
+                tmdbDb.upcomingMovieDao().insert(upcomingMovieResponse.results)
+            }
+
+            .onErrorResumeNext(Function<Throwable, ObservableSource<UpcomingMovieResponse>> {
+                Log.e(LOG_TAG, "-> loadInitial -> onErrorResumeNext -> ", it)
+                val localMovies = tmdbDb.upcomingMovieDao().getAllMovies()
+                val upcomingMovieResponse: UpcomingMovieResponse? = if (localMovies.isNotEmpty()) {
+                    UpcomingMovieResponse(localMovies)
+                } else {
+                    null
+                }
+                Observable.just(upcomingMovieResponse)
+            })
+
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
+
             .subscribe({ upcomingMovieResponse ->
                 Log.v(LOG_TAG, "-> loadInitial -> onNext -> PageKey = $initialKey")
-                val nextPageKey = if (upcomingMovieResponse.page == upcomingMovieResponse.totalPages) {
-                    null
-                } else {
-                    upcomingMovieResponse.page + 1
-                }
+                val nextPageKey =
+                    if (upcomingMovieResponse.page.let { it == upcomingMovieResponse.totalPages || it == -1 }) {
+                        null
+                    } else {
+                        upcomingMovieResponse.page + 1
+                    }
                 networkState.postValue(NetworkState.LOADED)
                 callback.onResult(upcomingMovieResponse.results, null, nextPageKey)
             }, { t ->
@@ -58,8 +84,15 @@ class UpcomingMoviesDataSource(
 
         networkState.postValue(NetworkState.LOADING)
         tmdbApi.getObservableUpcomingMovies(BuildConfig.TMDB_API_KEY, params.key)
+
+            .doOnNext { upcomingMovieResponse ->
+                Log.v(LOG_TAG, "-> loadAfter -> doOnNext -> PageKey = ${params.key}")
+                tmdbDb.upcomingMovieDao().insert(upcomingMovieResponse.results)
+            }
+
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
+
             .subscribe({ upcomingMovieResponse ->
                 Log.v(LOG_TAG, "-> loadAfter -> onNext -> PageKey = ${params.key}")
                 val nextPageKey = if (upcomingMovieResponse.page == upcomingMovieResponse.totalPages) {
