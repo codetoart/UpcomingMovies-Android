@@ -1,18 +1,34 @@
 package com.codetoart.android.upcomingmovies.ui.list
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.codetoart.android.upcomingmovies.GlideApp
 import com.codetoart.android.upcomingmovies.R
+import com.codetoart.android.upcomingmovies.data.model.Configuration
 import com.codetoart.android.upcomingmovies.data.model.Movie
+import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
+import com.codetoart.android.upcomingmovies.util.AppUtil
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
 
 class UpcomingMovieHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
+
+        val LOG_TAG: String = UpcomingMovieHolder::class.java.simpleName
+
         fun create(parent: ViewGroup): UpcomingMovieHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
             return UpcomingMovieHolder(view)
@@ -25,7 +41,9 @@ class UpcomingMovieHolder(view: View) : RecyclerView.ViewHolder(view) {
     val textViewAdult: TextView = view.findViewById(R.id.textViewAdult)
     val context: Context = view.context
 
-    fun bind(movie: Movie?) {
+    @SuppressLint("CheckResult")
+    fun bind(movie: Movie?, tmdbRepository: TmdbRepository, liveConfiguration: MutableLiveData<Configuration>) {
+
         textViewTitle.text = movie?.title
         textViewReleaseDate.text = movie?.releaseDate
         textViewAdult.text = if (movie?.adult == true) {
@@ -33,5 +51,37 @@ class UpcomingMovieHolder(view: View) : RecyclerView.ViewHolder(view) {
         } else {
             ""
         }
+
+        Observable.create<Configuration> { source ->
+            if (liveConfiguration.value == null) {
+                source.onError(Throwable())
+            } else {
+                source.onNext(liveConfiguration.value!!)
+            }
+            source.onComplete()
+        }
+            .onErrorResumeNext(Function<Throwable, ObservableSource<Configuration>> {
+                tmdbRepository.getObservableConfiguration()
+                    .doOnNext { configuration ->
+                        liveConfiguration.postValue(configuration)
+                    }
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+
+            .subscribe({ configuration ->
+                val imageUri = if (movie?.posterPath.isNullOrEmpty()) {
+                    null
+                } else {
+                    val imageBaseUrl = AppUtil.getImagePosterUrl(configuration, imageViewPoster.width)
+                    Uri.parse(imageBaseUrl).buildUpon().appendEncodedPath(movie?.posterPath).build()
+                }
+                GlideApp.with(itemView)
+                    .load(imageUri)
+                    .placeholder(R.drawable.ic_movie_placeholder)
+                    .into(imageViewPoster)
+            }, { t ->
+                Log.e(LOG_TAG, "-> bind -> subscribe -> onError", t)
+            })
     }
 }

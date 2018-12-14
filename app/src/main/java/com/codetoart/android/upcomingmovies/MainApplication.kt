@@ -59,6 +59,8 @@ class MainApplication : Application() {
         disposableConfiguration = tmdbRepository.fetchNewConfiguration()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .subscribe()
+            .subscribe({}, {})
     }
 }
+
+// TODO -> Discard drawable/minions_poster_image_w185.jpg into builds

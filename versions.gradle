@@ -30,4 +30,6 @@ versions.rxJava = "2.2.4"
 versions.rxAndroid = "2.1.0"
 versions.rxKotlin = "2.3.0"
 
+versions.glide = "4.8.0"
+
 ext.versions = versions

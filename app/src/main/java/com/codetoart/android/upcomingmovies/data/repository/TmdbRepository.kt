@@ -11,8 +11,6 @@ import com.codetoart.android.upcomingmovies.data.model.Listing
 import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
 import io.reactivex.Observable
-import io.reactivex.ObservableSource
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executor
 
@@ -70,13 +68,12 @@ class TmdbRepository(
             .doOnNext { configuration ->
                 Log.v(LOG_TAG, "-> fetchNewConfiguration -> onSuccess")
                 preferenceHelper.setConfiguration(configuration)
-            }.onErrorResumeNext(Function<Throwable, ObservableSource<Configuration>> {
+            }.doOnError {
                 Log.e(LOG_TAG, "-> fetchNewConfiguration -> onError -> ", it)
-                Observable.empty()
-            })
+            }
     }
 
-    fun getSingleConfiguration(): Observable<Configuration> {
+    fun getObservableConfiguration(): Observable<Configuration> {
 
         return Observable.create<Configuration> { source ->
             val savedConfiguration = PreferenceHelper.get().getConfiguration()
@@ -84,10 +81,13 @@ class TmdbRepository(
                 fetchNewConfiguration()
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
-                    .subscribe { configuration ->
+                    .subscribe({ configuration ->
                         source.onNext(configuration)
                         source.onComplete()
-                    }
+                    }, {
+                        source.onError(it)
+                        source.onComplete()
+                    })
             } else {
                 source.onNext(savedConfiguration)
                 source.onComplete()

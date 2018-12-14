@@ -18,6 +18,11 @@ data class Movie(
 
     val title: String,
 
+    @SerializedName("poster_path")
+    @JsonProperty("poster_path")
+    @ColumnInfo(name = "poster_path")
+    val posterPath: String?,
+
     @SerializedName("release_date")
     @JsonProperty("release_date")
     @ColumnInfo(name = "release_date")
