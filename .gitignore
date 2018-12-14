@@ -10,10 +10,5 @@
 /captures
 .externalNativeBuild
 
-# Markdown Navigator
-/.idea/markdown-navigator
-/.idea/markdown-navigator.xml
-/.idea/markdown-exported-files.xml
-
-# .idea
-/.idea/dictionaries
+# Write extra ignore files and folder below this line
+.idea
