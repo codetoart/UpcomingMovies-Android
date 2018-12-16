@@ -17,21 +17,21 @@ import com.codetoart.android.upcomingmovies.data.model.Configuration
 import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 import com.codetoart.android.upcomingmovies.util.AppUtil
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 
-class UpcomingMovieHolder(view: View) : RecyclerView.ViewHolder(view) {
+class UpcomingMovieHolder(
+    view: View,
+    private val onClickListener: View.OnClickListener
+) : RecyclerView.ViewHolder(view) {
 
     companion object {
 
         val LOG_TAG: String = UpcomingMovieHolder::class.java.simpleName
 
-        fun create(parent: ViewGroup): UpcomingMovieHolder {
+        fun create(parent: ViewGroup, onClickListener: View.OnClickListener): UpcomingMovieHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
-            return UpcomingMovieHolder(view)
+            return UpcomingMovieHolder(view, onClickListener)
         }
     }
 
@@ -46,29 +46,14 @@ class UpcomingMovieHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         textViewTitle.text = movie?.title
         textViewReleaseDate.text = movie?.releaseDate
-        textViewAdult.text = if (movie?.adult == true) {
-            context.getString(R.string.adult)
-        } else {
-            ""
+        textViewAdult.text = when {
+            movie?.adult == true -> context.getString(R.string.adult)
+            else -> ""
         }
 
-        Observable.create<Configuration> { source ->
-            if (liveConfiguration.value == null) {
-                source.onError(Throwable())
-            } else {
-                source.onNext(liveConfiguration.value!!)
-            }
-            source.onComplete()
-        }
-            .onErrorResumeNext(Function<Throwable, ObservableSource<Configuration>> {
-                tmdbRepository.getObservableConfiguration()
-                    .doOnNext { configuration ->
-                        liveConfiguration.postValue(configuration)
-                    }
-            })
+        tmdbRepository.getLiveConfiguration(liveConfiguration)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-
             .subscribe({ configuration ->
                 val imageUri = if (movie?.posterPath.isNullOrEmpty()) {
                     null
@@ -83,5 +68,8 @@ class UpcomingMovieHolder(view: View) : RecyclerView.ViewHolder(view) {
             }, { t ->
                 Log.e(LOG_TAG, "-> bind -> subscribe -> onError", t)
             })
+
+        itemView.tag = movie?.id ?: -1
+        itemView.setOnClickListener(onClickListener)
     }
 }

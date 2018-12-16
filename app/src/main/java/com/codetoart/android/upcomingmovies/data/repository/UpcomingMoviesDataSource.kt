@@ -8,7 +8,6 @@ import com.codetoart.android.upcomingmovies.BuildConfig
 import com.codetoart.android.upcomingmovies.data.local.TmdbDb
 import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.model.NetworkState
-import com.codetoart.android.upcomingmovies.data.model.UpcomingMovieResponse
 import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
@@ -37,6 +36,7 @@ class UpcomingMoviesDataSource(
         Log.v(LOG_TAG, "-> loadInitial")
 
         networkState.postValue(NetworkState.LOADING)
+        // TODO -> Think about changing Observable to Single
         tmdbApi.getObservableUpcomingMovies(BuildConfig.TMDB_API_KEY, initialKey)
 
             .doOnNext { upcomingMovieResponse ->
@@ -45,11 +45,11 @@ class UpcomingMoviesDataSource(
                 tmdbDb.upcomingMovieDao().insert(upcomingMovieResponse.results)
             }
 
-            .onErrorResumeNext(Function<Throwable, ObservableSource<UpcomingMovieResponse>> {
+            .onErrorResumeNext(Function<Throwable, ObservableSource<TmdbApi.UpcomingMovieResponse>> {
                 Log.e(LOG_TAG, "-> loadInitial -> onErrorResumeNext -> ", it)
                 val localMovies = tmdbDb.upcomingMovieDao().getAllMovies()
-                val upcomingMovieResponse: UpcomingMovieResponse? = if (localMovies.isNotEmpty()) {
-                    UpcomingMovieResponse(localMovies)
+                val upcomingMovieResponse: TmdbApi.UpcomingMovieResponse? = if (localMovies.isNotEmpty()) {
+                    TmdbApi.UpcomingMovieResponse(localMovies)
                 } else {
                     null
                 }

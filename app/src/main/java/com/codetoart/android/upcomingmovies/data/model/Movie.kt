@@ -12,9 +12,9 @@ data class Movie(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "row_id")
-    val rowId: Int,
+    val rowId: Long,
 
-    val id: Int,
+    val id: Long,
 
     val title: String,
 
@@ -28,5 +28,14 @@ data class Movie(
     @ColumnInfo(name = "release_date")
     val releaseDate: String,
 
-    val adult: Boolean
+    val adult: Boolean,
+
+    var posters: List<Posters>?,
+
+    @SerializedName("vote_average")
+    @JsonProperty("vote_average")
+    @ColumnInfo(name = "vote_average")
+    val voteAverage: Float,
+
+    val overview: String
 )

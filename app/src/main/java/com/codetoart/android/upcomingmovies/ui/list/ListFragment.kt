@@ -1,5 +1,6 @@
 package com.codetoart.android.upcomingmovies.ui.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,13 +14,14 @@ import androidx.lifecycle.ViewModelProviders
 import com.codetoart.android.upcomingmovies.R
 import com.codetoart.android.upcomingmovies.data.local.PreferenceHelper
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
+import com.codetoart.android.upcomingmovies.ui.details.DetailsActivity
+import com.codetoart.android.upcomingmovies.ui.details.DetailsFragment
 import kotlinx.android.synthetic.main.list_fragment.*
 
-class ListFragment : Fragment() {
+class ListFragment : Fragment(), View.OnClickListener {
 
     companion object {
         val LOG_TAG: String = ListFragment::class.java.simpleName
-
         fun newInstance() = ListFragment()
     }
 
@@ -40,10 +42,10 @@ class ListFragment : Fragment() {
         Log.v(LOG_TAG, "-> onActivityCreated")
 
         preferenceHelper = PreferenceHelper.get()
-        viewModel = getListViewModel()
         tmdbRepository = TmdbRepository.get()
+        viewModel = getListViewModel(tmdbRepository, preferenceHelper)
 
-        listAdapter = ListAdapter(tmdbRepository, viewModel.liveConfiguration) {
+        listAdapter = ListAdapter(tmdbRepository, viewModel.liveConfiguration, this) {
             viewModel.retry()
         }
         recyclerView.adapter = listAdapter
@@ -61,14 +63,27 @@ class ListFragment : Fragment() {
             viewModel.getUpcomingMovies()
     }
 
-    private fun getListViewModel(): ListViewModel {
+    private fun getListViewModel(tmdbRepository: TmdbRepository, preferenceHelper: PreferenceHelper): ListViewModel {
         Log.v(LOG_TAG, "-> getListViewModel")
 
         return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return ListViewModel(activity!!.application, TmdbRepository.get(), preferenceHelper) as T
+                return ListViewModel(tmdbRepository, preferenceHelper) as T
             }
         }).get(ListViewModel::class.java)
+    }
+
+    override fun onClick(v: View) {
+
+        when (v.id) {
+            R.id.listItem -> {
+                Log.v(LOG_TAG, "-> onClick -> listItem")
+
+                val intent = Intent(context, DetailsActivity::class.java)
+                intent.putExtra(DetailsFragment.BUNDLE_MOVIE_ID, v.tag as Long)
+                startActivity(intent)
+            }
+        }
     }
 }

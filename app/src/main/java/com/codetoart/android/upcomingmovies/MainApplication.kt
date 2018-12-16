@@ -63,4 +63,4 @@ class MainApplication : Application() {
     }
 }
 
-// TODO -> Discard drawable/minions_poster_image_w185.jpg into builds
+// TODO -> Discard drawable/minions_poster_image_w185.jpg(i.e. all tools res) into APK

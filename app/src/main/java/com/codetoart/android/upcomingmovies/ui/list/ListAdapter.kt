@@ -1,5 +1,6 @@
 package com.codetoart.android.upcomingmovies.ui.list
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedListAdapter
@@ -14,6 +15,7 @@ import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 class ListAdapter(
     private val tmdbRepository: TmdbRepository,
     private val liveConfiguration: MutableLiveData<Configuration>,
+    private val onClickListener: View.OnClickListener,
     private val retryCallback: () -> Unit = {}
 ) : PagedListAdapter<Movie, RecyclerView.ViewHolder>(DIFF_UTIL) {
 
@@ -39,7 +41,7 @@ class ListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         return when (viewType) {
-            R.layout.list_item -> UpcomingMovieHolder.create(parent)
+            R.layout.list_item -> UpcomingMovieHolder.create(parent, onClickListener)
             R.layout.network_state_list_item -> NetworkStateItemViewHolder.create(parent, retryCallback)
             else -> throw IllegalArgumentException("-> Unknown view type: $viewType")
         }
