@@ -12,10 +12,7 @@ import com.codetoart.android.upcomingmovies.data.model.Configuration
 import com.codetoart.android.upcomingmovies.data.model.Listing
 import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
 import io.reactivex.Single
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executor
 
@@ -68,11 +65,11 @@ class TmdbRepository(
         )
     }
 
-    fun fetchNewConfiguration(): Observable<Configuration> {
+    fun fetchNewConfiguration(): Single<Configuration> {
         Log.v(LOG_TAG, "-> fetchNewConfiguration")
 
-        return tmdbApi.getObservableConfiguration(BuildConfig.TMDB_API_KEY)
-            .doOnNext { configuration ->
+        return tmdbApi.getSingleConfiguration(BuildConfig.TMDB_API_KEY)
+            .doOnSuccess { configuration ->
                 Log.v(LOG_TAG, "-> fetchNewConfiguration -> onSuccess")
                 preferenceHelper.setConfiguration(configuration)
             }.doOnError {
@@ -80,47 +77,43 @@ class TmdbRepository(
             }
     }
 
-    fun getObservableConfiguration(): Observable<Configuration> {
-        Log.v(LOG_TAG, "-> getObservableConfiguration")
+    fun getSingleConfiguration(): Single<Configuration> {
+        Log.v(LOG_TAG, "-> getSingleConfiguration")
 
-        return Observable.create<Configuration> { source ->
+        return Single.create<Configuration> { source ->
             val savedConfiguration = preferenceHelper.getConfiguration()
             if (savedConfiguration == null) {
                 fetchNewConfiguration()
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe({ configuration ->
-                        source.onNext(configuration)
-                        source.onComplete()
+                        source.onSuccess(configuration)
                     }, {
                         source.onError(it)
-                        source.onComplete()
                     })
             } else {
-                source.onNext(savedConfiguration)
-                source.onComplete()
+                source.onSuccess(savedConfiguration)
             }
         }
     }
 
     @SuppressLint("CheckResult")
-    fun getLiveConfiguration(liveConfiguration: MutableLiveData<Configuration>): Observable<Configuration> {
+    fun getLiveConfiguration(liveConfiguration: MutableLiveData<Configuration>): Single<Configuration> {
         Log.v(LOG_TAG, "-> getLiveConfiguration")
 
-        return Observable.create<Configuration> { source ->
+        return Single.create<Configuration> { source ->
             if (liveConfiguration.value == null) {
                 source.onError(Throwable())
             } else {
-                source.onNext(liveConfiguration.value!!)
+                source.onSuccess(liveConfiguration.value!!)
             }
-            source.onComplete()
         }
-            .onErrorResumeNext(Function<Throwable, ObservableSource<Configuration>> {
-                getObservableConfiguration()
-                    .doOnNext { configuration ->
+            .onErrorResumeNext {
+                getSingleConfiguration()
+                    .doOnSuccess { configuration ->
                         liveConfiguration.postValue(configuration)
                     }
-            })
+            }
     }
 
     fun getMovieDetails(id: Long): Single<Movie> {

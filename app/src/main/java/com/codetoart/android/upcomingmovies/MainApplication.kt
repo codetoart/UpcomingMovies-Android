@@ -1,5 +1,6 @@
 package com.codetoart.android.upcomingmovies
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
@@ -31,7 +32,6 @@ class MainApplication : Application() {
     private lateinit var preferenceHelper: PreferenceHelper
     private lateinit var appExecutors: AppExecutors
     private lateinit var tmdbRepository: TmdbRepository
-    private var disposableConfiguration: Disposable? = null
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
@@ -53,10 +53,11 @@ class MainApplication : Application() {
         getConfiguration()
     }
 
+    @SuppressLint("CheckResult")
     private fun getConfiguration() {
         Log.v(LOG_TAG, "-> getConfiguration")
 
-        disposableConfiguration = tmdbRepository.fetchNewConfiguration()
+        tmdbRepository.fetchNewConfiguration()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe({}, {})

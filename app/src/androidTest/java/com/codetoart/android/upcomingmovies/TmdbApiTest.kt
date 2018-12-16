@@ -27,17 +27,17 @@ class TmdbApiTest {
     }
 
     @Test
-    fun hit_getObservableConfiguration() {
+    fun hit_getSingleConfiguration() {
 
-        val observable = tmdbApi.getObservableConfiguration(BuildConfig.TMDB_API_KEY)
-        commonRxObservableSubscriber(observable)
+        val single = tmdbApi.getSingleConfiguration(BuildConfig.TMDB_API_KEY)
+        commonRxSingleSubscriber(single)
     }
 
     @Test
-    fun hit_getObservableUpcomingMovies() {
+    fun hit_getSingleUpcomingMovies() {
 
-        val observable = tmdbApi.getObservableUpcomingMovies(BuildConfig.TMDB_API_KEY, 1)
-        commonRxObservableSubscriber(observable)
+        val single = tmdbApi.getSingleUpcomingMovies(BuildConfig.TMDB_API_KEY, 1)
+        commonRxSingleSubscriber(single)
     }
 
     @Test

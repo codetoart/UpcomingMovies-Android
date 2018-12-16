@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.gson.annotations.SerializedName
-import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.HttpUrl
 import retrofit2.Call
@@ -28,11 +27,11 @@ interface TmdbApi {
 
     @GET("configuration")
     @GsonConverter
-    fun getObservableConfiguration(@Query("api_key") apiKey: String): Observable<Configuration>
+    fun getSingleConfiguration(@Query("api_key") apiKey: String): Single<Configuration>
 
     @GET("movie/upcoming")
     @GsonConverter
-    fun getObservableUpcomingMovies(@Query("api_key") apiKey: String, @Query("page") page: Int): Observable<UpcomingMovieResponse>
+    fun getSingleUpcomingMovies(@Query("api_key") apiKey: String, @Query("page") page: Int): Single<UpcomingMovieResponse>
 
     @GET("movie/{movie_id}/images")
     @GsonConverter
