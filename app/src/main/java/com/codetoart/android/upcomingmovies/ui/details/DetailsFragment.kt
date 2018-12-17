@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -12,8 +14,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.codetoart.android.upcomingmovies.GlideApp
+import com.codetoart.android.upcomingmovies.MainApplication
 import com.codetoart.android.upcomingmovies.R
 import com.codetoart.android.upcomingmovies.data.local.PreferenceHelper
+import com.codetoart.android.upcomingmovies.data.model.NetworkState
+import com.codetoart.android.upcomingmovies.data.model.Status
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 import com.codetoart.android.upcomingmovies.util.AppUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -54,7 +59,7 @@ class DetailsFragment : Fragment() {
 
         tmdbRepository = TmdbRepository.get()
         preferenceHelper = PreferenceHelper.get()
-        viewModel = getDetailsViewModel(tmdbRepository, preferenceHelper)
+        viewModel = getDetailsViewModel(MainApplication.get(), tmdbRepository, preferenceHelper)
 
         viewModel.liveMovie.observe(this, Observer {
             Log.v(LOG_TAG, "-> onActivityCreated -> liveMovie Observer")
@@ -90,6 +95,11 @@ class DetailsFragment : Fragment() {
             }
         })
 
+        viewModel.liveNetworkState.observe(this, Observer {
+            Log.v(LOG_TAG, "-> onActivityCreated -> liveNetworkState Observer")
+            setNetworkViewsVisibility(it)
+        })
+
         if (savedInstanceState == null) {
             val id = arguments?.getLong(BUNDLE_MOVIE_ID) ?: -1
             viewModel.getMovieDetails(id)
@@ -97,6 +107,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun getDetailsViewModel(
+        app: MainApplication,
         tmdbRepository: TmdbRepository,
         preferenceHelper: PreferenceHelper
     ): DetailsViewModel {
@@ -105,8 +116,36 @@ class DetailsFragment : Fragment() {
         return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return DetailsViewModel(tmdbRepository, preferenceHelper) as T
+                return DetailsViewModel(app, tmdbRepository, preferenceHelper) as T
             }
         }).get(DetailsViewModel::class.java)
+    }
+
+    private fun setDataViewsVisibility(visibility: Int) {
+        textViewTitle.visibility = visibility
+        textViewOverview.visibility = visibility
+        ratingBar.visibility = visibility
+    }
+
+    private fun setNetworkViewsVisibility(networkState: NetworkState) {
+
+        when {
+            networkState.status == Status.RUNNING -> {
+                textViewError.visibility = INVISIBLE
+                progressBar.visibility = VISIBLE
+                setDataViewsVisibility(INVISIBLE)
+            }
+            networkState.status == Status.SUCCESS -> {
+                textViewError.visibility = INVISIBLE
+                progressBar.visibility = INVISIBLE
+                setDataViewsVisibility(VISIBLE)
+            }
+            networkState.status == Status.FAILED -> {
+                progressBar.visibility = INVISIBLE
+                textViewError.text = networkState.msg
+                textViewError.visibility = VISIBLE
+                setDataViewsVisibility(INVISIBLE)
+            }
+        }
     }
 }
