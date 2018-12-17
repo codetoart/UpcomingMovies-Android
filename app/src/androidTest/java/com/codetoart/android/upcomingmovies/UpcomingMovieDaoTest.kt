@@ -7,7 +7,6 @@ import com.codetoart.android.upcomingmovies.data.local.TmdbDb
 import com.codetoart.android.upcomingmovies.data.local.UpcomingMovieDao
 import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
-import com.google.gson.Gson
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -27,6 +26,8 @@ class UpcomingMovieDaoTest {
     private lateinit var tmdbDb: TmdbDb
 
     private lateinit var upcomingMovieDao: UpcomingMovieDao
+
+    private val objectMapper = ObjectMapperSingleton.get()
 
     @Before
     fun initDb() {
@@ -54,7 +55,7 @@ class UpcomingMovieDaoTest {
     @Test
     fun insertAndGet_returnsNotNull() {
 
-        val mockMinionMovie = Gson().fromJson<Movie>(MockMinionsMovieData.detailsResponse, Movie::class.java)
+        val mockMinionMovie = objectMapper.fromJson(MockMinionsMovieData.detailsResponse, Movie::class.java)!!
         upcomingMovieDao.insert(mockMinionMovie)
         val movieFromDb = upcomingMovieDao.getMovie(mockMinionMovie.id)
 
@@ -64,13 +65,13 @@ class UpcomingMovieDaoTest {
     @Test
     fun updatePostersTest() {
 
-        val mockMinionMovie = Gson().fromJson<Movie>(MockMinionsMovieData.detailsResponse, Movie::class.java)
+        val mockMinionMovie = objectMapper.fromJson(MockMinionsMovieData.detailsResponse, Movie::class.java)!!
         upcomingMovieDao.insert(mockMinionMovie)
 
-        val mockMinionImageResponse = Gson().fromJson<TmdbApi.ImagesResponse>(
+        val mockMinionImageResponse = objectMapper.fromJson(
             MockMinionsMovieData.imagesResponse,
             TmdbApi.ImagesResponse::class.java
-        )
+        )!!
 
         val noOfRowsUpdated = upcomingMovieDao.updatePosters(mockMinionMovie.id, mockMinionImageResponse.posters)
         assertEquals(1, noOfRowsUpdated)

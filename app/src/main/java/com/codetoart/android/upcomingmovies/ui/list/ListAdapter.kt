@@ -24,15 +24,11 @@ class ListAdapter(
         val LOG_TAG: String = ListAdapter::class.java.simpleName
 
         val DIFF_UTIL = object : DiffUtil.ItemCallback<Movie>() {
-            override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-                // TODO
-                return false
-            }
 
-            override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-                // TODO
-                return false
-            }
+            // In this example contents will always be different in a list
+            override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = false
+
+            override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean = false
         }
     }
 

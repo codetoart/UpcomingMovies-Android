@@ -17,8 +17,8 @@ internal annotation class JacksonConverter
 
 class QualifiedTypeConverterFactory : Converter.Factory {
 
-    val jacksonFactory: Converter.Factory
-    val gsonFactory: Converter.Factory
+    private val jacksonFactory: Converter.Factory
+    private val gsonFactory: Converter.Factory
 
     constructor(jacksonFactory: Converter.Factory, gsonFactory: Converter.Factory) : super() {
         this.jacksonFactory = jacksonFactory

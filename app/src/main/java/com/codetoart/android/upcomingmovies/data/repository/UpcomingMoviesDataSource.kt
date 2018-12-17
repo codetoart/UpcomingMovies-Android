@@ -47,7 +47,7 @@ class UpcomingMoviesDataSource(
                 Single.create<TmdbApi.UpcomingMovieResponse> { source ->
                     val localMovies = tmdbDb.upcomingMovieDao().getAllMovies()
                     if (localMovies.isNullOrEmpty()) {
-                        source.onError(Throwable("-> No local record found"))
+                        source.onError(Throwable("No local record found"))
                     } else {
                         source.onSuccess(TmdbApi.UpcomingMovieResponse(localMovies))
                     }

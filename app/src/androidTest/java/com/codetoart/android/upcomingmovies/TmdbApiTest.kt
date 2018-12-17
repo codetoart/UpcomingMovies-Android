@@ -17,7 +17,9 @@ import retrofit2.Call
 @RunWith(AndroidJUnit4::class)
 class TmdbApiTest {
 
-    private val tmdbApi = TmdbApi.get()
+    private val gson = GsonSingleton.get()
+    private val objectMapper = ObjectMapperSingleton.get()
+    private val tmdbApi = TmdbApi.init(gson, objectMapper)
 
     @Test
     fun hit_getConfiguration() {

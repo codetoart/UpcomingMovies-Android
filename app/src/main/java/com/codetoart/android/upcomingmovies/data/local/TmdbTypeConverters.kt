@@ -1,22 +1,23 @@
 package com.codetoart.android.upcomingmovies.data.local
 
 import androidx.room.TypeConverter
+import com.codetoart.android.upcomingmovies.ObjectMapperSingleton
 import com.codetoart.android.upcomingmovies.data.model.Posters
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.fasterxml.jackson.module.kotlin.readValue
 
 class TmdbTypeConverters {
+
+    private val objectMapper = ObjectMapperSingleton.get()
 
     @TypeConverter
     fun postersToJsonArray(posters: List<Posters>?): String? {
 
-        return Gson().toJson(posters)
+        return objectMapper.writeValueAsString(posters)
     }
 
     @TypeConverter
-    fun jsonArrayToPosters(jsonArray: String?): List<Posters>? {
+    fun jsonArrayToPosters(jsonArray: String): List<Posters>? {
 
-        val typeToken = object : TypeToken<List<Posters>>() {}.type
-        return Gson().fromJson<List<Posters>>(jsonArray, typeToken)
+        return objectMapper.readValue<List<Posters>>(jsonArray)
     }
 }

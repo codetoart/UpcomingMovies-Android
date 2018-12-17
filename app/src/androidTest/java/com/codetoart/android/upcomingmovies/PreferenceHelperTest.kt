@@ -4,9 +4,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.codetoart.android.upcomingmovies.data.local.PreferenceHelper
 import com.codetoart.android.upcomingmovies.data.model.Configuration
-import com.google.gson.Gson
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,7 +21,8 @@ class PreferenceHelperTest {
 
     private val appContext = InstrumentationRegistry.getInstrumentation().context
 
-    private val preferenceHelper = PreferenceHelper.init(appContext)
+    private val objectMapper = ObjectMapperSingleton.get()
+    private val preferenceHelper = PreferenceHelper.init(appContext, objectMapper)
 
     private lateinit var allPreferences: Map<String, *>
 
@@ -31,7 +32,7 @@ class PreferenceHelperTest {
     fun getAllPreferences() {
         println("-> getAllPreferences -> before")
 
-        mockConfiguration = Gson().fromJson(MockConfiguration.actualMock, Configuration::class.java)
+        mockConfiguration = objectMapper.fromJson(MockConfiguration.actualMock, Configuration::class.java)!!
 
         allPreferences = preferenceHelper.getSharedPreferences().all
         preferenceHelper.getSharedPreferences().edit().clear().commit()

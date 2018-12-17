@@ -2,16 +2,17 @@ package com.codetoart.android.upcomingmovies
 
 import com.codetoart.android.upcomingmovies.data.model.Configuration
 import com.codetoart.android.upcomingmovies.util.AppUtil
-import com.google.gson.Gson
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class AppUtilsUnitTest {
 
+    private val objectMapper = ObjectMapperSingleton.get()
+
     @Test
     fun getImagePosterUrl() {
 
-        val configuration = Gson().fromJson(MockConfiguration.actualMock, Configuration::class.java)
+        val configuration = objectMapper.fromJson(MockConfiguration.actualMock, Configuration::class.java)!!
 
         var url = AppUtil.getImagePosterUrl(configuration, 0)
         println(url)

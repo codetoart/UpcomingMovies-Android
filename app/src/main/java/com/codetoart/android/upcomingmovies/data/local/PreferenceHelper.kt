@@ -5,10 +5,12 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.annotation.VisibleForTesting
 import com.codetoart.android.upcomingmovies.data.model.Configuration
-import com.google.gson.Gson
+import com.codetoart.android.upcomingmovies.fromJson
+import com.fasterxml.jackson.databind.ObjectMapper
 
 class PreferenceHelper private constructor(
-    context: Context
+    context: Context,
+    private val objectMapper: ObjectMapper
 ) {
 
     companion object {
@@ -16,9 +18,9 @@ class PreferenceHelper private constructor(
         @Volatile
         private var singleton: PreferenceHelper? = null
 
-        fun init(context: Context): PreferenceHelper =
+        fun init(context: Context, objectMapper: ObjectMapper): PreferenceHelper =
             singleton ?: synchronized(this) {
-                singleton ?: PreferenceHelper(context).also { singleton = it }
+                singleton ?: PreferenceHelper(context, objectMapper).also { singleton = it }
             }
 
         fun get(): PreferenceHelper = singleton ?: throw Exception("PreferenceHelper not initialised")
@@ -34,13 +36,12 @@ class PreferenceHelper private constructor(
     }
 
     fun setConfiguration(value: Configuration) {
-        // TODO -> Rethink about GSON or Jackson and singleton initialization
-        sharedPreferences.edit().putString(KEY_CONFIGURATION, Gson().toJson(value)).apply()
+        sharedPreferences.edit().putString(KEY_CONFIGURATION, objectMapper.writeValueAsString(value)).apply()
     }
 
     fun getConfiguration(): Configuration? {
 
         val configurationJson = sharedPreferences.getString(KEY_CONFIGURATION, null)
-        return Gson().fromJson(configurationJson, Configuration::class.java)
+        return objectMapper.fromJson(configurationJson, Configuration::class.java)
     }
 }

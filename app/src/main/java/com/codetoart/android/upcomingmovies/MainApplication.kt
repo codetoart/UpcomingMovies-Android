@@ -9,7 +9,8 @@ import com.codetoart.android.upcomingmovies.data.local.PreferenceHelper
 import com.codetoart.android.upcomingmovies.data.local.TmdbDb
 import com.codetoart.android.upcomingmovies.data.remote.TmdbApi
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
-import io.reactivex.disposables.Disposable
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import io.reactivex.schedulers.Schedulers
 
 class MainApplication : Application() {
@@ -27,6 +28,8 @@ class MainApplication : Application() {
         }
     }
 
+    private lateinit var gson: Gson
+    private lateinit var objectMapper: ObjectMapper
     private lateinit var tmdbApi: TmdbApi
     private lateinit var tmdbDb: TmdbDb
     private lateinit var preferenceHelper: PreferenceHelper
@@ -44,9 +47,11 @@ class MainApplication : Application() {
 
         set(this)
 
-        tmdbApi = TmdbApi.get()
+        gson = GsonSingleton.get()
+        objectMapper = ObjectMapperSingleton.get()
+        tmdbApi = TmdbApi.init(gson, objectMapper)
         tmdbDb = TmdbDb.init(applicationContext)
-        preferenceHelper = PreferenceHelper.init(applicationContext)
+        preferenceHelper = PreferenceHelper.init(applicationContext, objectMapper)
         appExecutors = AppExecutors.get()
         tmdbRepository = TmdbRepository.init(tmdbApi, tmdbDb, appExecutors.networkExecutor, preferenceHelper)
 
@@ -65,4 +70,3 @@ class MainApplication : Application() {
 }
 
 // TODO -> Discard drawable/minions_poster_image_w185.jpg(i.e. all tools res) into APK
-// TODO -> Update README - Key init
