@@ -52,6 +52,14 @@ class ListAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+
+        if (holder is UpcomingMovieHolder) {
+            holder.onViewRecycled()
+        }
+    }
+
     override fun getItemViewType(position: Int): Int {
         return if (hasExtraRow() && position == itemCount - 1) {
             R.layout.network_state_list_item

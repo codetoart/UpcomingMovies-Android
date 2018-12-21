@@ -16,6 +16,7 @@ class ObjectMapperSingleton {
                 singleton ?: ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .registerKotlinModule()
+                    .also { singleton = it }
             }
     }
 }

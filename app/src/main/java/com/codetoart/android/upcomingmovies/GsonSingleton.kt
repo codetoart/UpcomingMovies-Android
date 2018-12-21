@@ -11,7 +11,7 @@ class GsonSingleton {
 
         fun get(): Gson =
             singleton ?: synchronized(this) {
-                singleton ?: Gson()
+                singleton ?: Gson().also { singleton = it }
             }
     }
 }

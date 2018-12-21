@@ -1,6 +1,5 @@
 package com.codetoart.android.upcomingmovies.ui.list
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -18,6 +17,7 @@ import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 import com.codetoart.android.upcomingmovies.util.AppUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class UpcomingMovieHolder(
@@ -41,7 +41,8 @@ class UpcomingMovieHolder(
     val textViewAdult: TextView = view.findViewById(R.id.textViewAdult)
     val context: Context = view.context
 
-    @SuppressLint("CheckResult")
+    private var disposableConfiguration: Disposable? = null
+
     fun bind(movie: Movie?, tmdbRepository: TmdbRepository, liveConfiguration: MutableLiveData<Configuration>) {
 
         textViewTitle.text = movie?.title
@@ -51,7 +52,7 @@ class UpcomingMovieHolder(
             else -> ""
         }
 
-        tmdbRepository.getLiveConfiguration(liveConfiguration)
+        disposableConfiguration = tmdbRepository.getLiveConfiguration(liveConfiguration)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ configuration ->
@@ -71,5 +72,9 @@ class UpcomingMovieHolder(
 
         itemView.tag = movie?.id ?: -1
         itemView.setOnClickListener(onClickListener)
+    }
+
+    fun onViewRecycled() {
+        disposableConfiguration?.dispose()
     }
 }

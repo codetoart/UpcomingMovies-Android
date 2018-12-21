@@ -1,6 +1,5 @@
 package com.codetoart.android.upcomingmovies.ui.details
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +11,7 @@ import com.codetoart.android.upcomingmovies.data.model.Movie
 import com.codetoart.android.upcomingmovies.data.model.NetworkState
 import com.codetoart.android.upcomingmovies.data.repository.TmdbRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class DetailsViewModel(
@@ -28,14 +28,16 @@ class DetailsViewModel(
     val liveMovie: MutableLiveData<Movie> = MutableLiveData()
     val liveNetworkState: MutableLiveData<NetworkState> = MutableLiveData()
 
-    @SuppressLint("CheckResult")
+    private var disposableMovieDetails: Disposable? = null
+    private var disposableMovieImagesFromRemote: Disposable? = null
+
     fun getMovieDetails(id: Long) {
         Log.v(LOG_TAG, "-> getMovieDetails")
 
         liveNetworkState.value = NetworkState.LOADING
         liveConfiguration.value = preferenceHelper.getConfiguration()
 
-        tmdbRepository.getMovieDetails(id)
+        disposableMovieDetails = tmdbRepository.getMovieDetails(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ movie ->
@@ -52,11 +54,10 @@ class DetailsViewModel(
             })
     }
 
-    @SuppressLint("CheckResult")
     fun getMovieImagesFromRemote(id: Long) {
         Log.v(LOG_TAG, "-> getMovieImagesFromRemote")
 
-        tmdbRepository.getMovieImagesFromRemote(id)
+        disposableMovieImagesFromRemote = tmdbRepository.getMovieImagesFromRemote(id)
             .subscribeOn(Schedulers.io())
             .subscribe({ imagesResponse ->
                 Log.v(LOG_TAG, "-> getMovieImagesFromRemote -> onSuccess")
@@ -66,5 +67,13 @@ class DetailsViewModel(
             }, { t ->
                 Log.e(LOG_TAG, "-> getMovieImagesFromRemote -> onError -> ", t)
             })
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.v(LOG_TAG, "-> onCleared")
+
+        disposableMovieDetails?.dispose()
+        disposableMovieImagesFromRemote?.dispose()
     }
 }
